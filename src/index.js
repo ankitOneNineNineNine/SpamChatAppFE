@@ -6,7 +6,7 @@ import { applyMiddleware, combineReducers, createStore } from "redux";
 import { createLogger } from "redux-logger";
 import reportWebVitals from "./reportWebVitals";
 import thunk from "redux-thunk";
-import {setUser} from "./common/reducers";
+import { setUser } from "./common/reducers";
 const logger = createLogger();
 
 const rootReducer = combineReducers({ user: setUser });
@@ -14,11 +14,9 @@ const rootReducer = combineReducers({ user: setUser });
 const store = createStore(rootReducer, applyMiddleware(logger, thunk));
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
-  </React.StrictMode>,
+  <Provider store={store}>
+    <App />
+  </Provider>,
   document.getElementById("root")
 );
 

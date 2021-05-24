@@ -97,7 +97,15 @@ export default function LDrawer() {
               <FriendsList toggleDrawer={toggleDrawer} />
             ) : (
               <div style={{ width: "250px" }}>
-                <Profile />
+                <Profile
+                  user={{
+                    fullname: "Aman Mool",
+                    status: "online",
+                    email: "AmanMool@gmail.com",
+                    address: "Bhaktapur, Radhe-Radhe",
+                    username: "AmanMool",
+                  }}
+                />
                 <MessageDividers />
               </div>
             )}

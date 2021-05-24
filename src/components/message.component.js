@@ -8,6 +8,7 @@ import Avatar from "@material-ui/core/Avatar";
 import ImageIcon from "@material-ui/icons/Image";
 import WorkIcon from "@material-ui/icons/Work";
 import BeachAccessIcon from "@material-ui/icons/BeachAccess";
+import { Typography } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   sent: {
@@ -36,7 +37,7 @@ export default function MessageView({ sent }) {
           <ImageIcon />
         </Avatar>
       </ListItemAvatar>
-      <ListItemText primary="Photos" secondary="Jan 9, 2014" />
+      <ListItemText primary="Photos, Jan 9, 2014" secondary="Hello Guyz kasto cha ta?" />
     </ListItem>
   );
 }

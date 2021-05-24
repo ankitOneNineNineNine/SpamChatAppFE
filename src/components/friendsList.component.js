@@ -56,7 +56,7 @@ export default function FriendsList({ toggleDrawer }) {
       <List>
         {["Inbox", "Starred", "Send email", "Drafts", "Others"].map(
           (text, index) => (
-            <ListItem>
+            <ListItem key = {index}>
               <ListItemAvatar>
                 <Avatar>
                   <ImageIcon />
@@ -70,7 +70,7 @@ export default function FriendsList({ toggleDrawer }) {
       <Divider />
       <List>
         {["All mail", "Trash", "Spam"].map((text, index) => (
-          <ListItem>
+          <ListItem key = {index}>
             <ListItemAvatar>
               <Avatar>
                 <ImageIcon />

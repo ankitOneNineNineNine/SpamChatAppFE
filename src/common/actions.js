@@ -8,7 +8,7 @@ export const setUser = (credentials) => {
     try {
       const { user, token } = await POST("/auth/login", credentials);
       localStorage.setItem("i_hash", token);
-      displaySuccess(`Welcome ${user.username}`)
+      console.log(user)
       dispatch({ type: SET_USER_SUCCESS, payload: user });
     } catch (error) {
       console.log(error)

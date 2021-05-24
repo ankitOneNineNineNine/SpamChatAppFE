@@ -15,7 +15,9 @@ import GroupAddIcon from "@material-ui/icons/GroupAdd";
 import ShareIcon from "@material-ui/icons/Share";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
-import { Divider, Tooltip } from "@material-ui/core";
+import { CircularProgress, Divider, Tooltip } from "@material-ui/core";
+import EditIcon from "@material-ui/icons/Edit";
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,8 +26,6 @@ const useStyles = makeStyles((theme) => ({
   media: {
     height: 0,
     paddingTop: "70.25%", // 16:9
-
-    
   },
   expand: {
     transform: "rotate(0deg)",
@@ -42,33 +42,37 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Profile() {
+export default function Profile({ user }) {
   const classes = useStyles();
+  const me = useSelector((state) => state.user);
   const [expanded, setExpanded] = React.useState(false);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
-
+  if (!me.user || me.isLoading) {
+    return <CircularProgress />;
+  }
   return (
-    <Card className={classes.root}>
-      {/* <CardHeader
-        avatar={
-          <Avatar aria-label="recipe" className={classes.avatar}>
-            R
-          </Avatar>
-        }
-        title="Aman Mool"
-        subheader="amanmool2000"
-      /> */}
+    <Card
+      className={classes.root}
+      style={
+        user.username === me.user.username
+          ? {
+              display: "block",
+              margin: "auto",
+            }
+          : null
+      }
+    >
       <CardHeader
         avatar={
           <Avatar aria-label="recipe" className={classes.avatar}>
             A
           </Avatar>
         }
-        title="Aman Mool"
-        subheader="offline"
+        title={user.fullname}
+        subheader={user.status}
       />
       <CardMedia
         className={classes.media}
@@ -76,11 +80,20 @@ export default function Profile() {
         title="Profile Picture"
       />
       <CardActions disableSpacing>
-        <Tooltip title="Send Friend Request">
-          <IconButton aria-label="Send Friend Request">
-            <GroupAddIcon />
-          </IconButton>
-        </Tooltip>
+        {user.username === me.user.username ? (
+          <Tooltip title="Edit">
+            <IconButton aria-label="Edit">
+              <EditIcon />
+              <Typography variant="caption" style = {{fontWeight: 'bolder'}}>Edit</Typography>
+            </IconButton>
+          </Tooltip>
+        ) : (
+          <Tooltip title="Send Friend Request">
+            <IconButton aria-label="Send Friend Request">
+              <GroupAddIcon />
+            </IconButton>
+          </Tooltip>
+        )}
         <IconButton
           className={clsx(classes.expand, {
             [classes.expandOpen]: expanded,
@@ -89,18 +102,28 @@ export default function Profile() {
           aria-expanded={expanded}
           aria-label="show more"
         >
-          <ExpandMoreIcon />
+          {user.username !== me.user.username && <ExpandMoreIcon />}
         </IconButton>
       </CardActions>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
+      {user.username === me.user.username ? (
         <CardContent>
-          <Typography variant="h6">Aman Mool </Typography>
+          <Typography variant="h6">{user.fullname}</Typography>
           <Divider />
-          <Typography paragraph>amanmool2011@gmail.com</Typography>
-          <Typography paragraph>amanmool5112</Typography>
-          <Typography paragraph>Bhaktapur</Typography>
+          <Typography paragraph>{user.email}</Typography>
+          <Typography paragraph>{user.username}</Typography>
+          <Typography paragraph>{user.address}</Typography>
         </CardContent>
-      </Collapse>
+      ) : (
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <CardContent>
+            <Typography variant="h6">{user.fullname}</Typography>
+            <Divider />
+            <Typography paragraph>{user.email}</Typography>
+            <Typography paragraph>{user.username}</Typography>
+            <Typography paragraph>{user.address}</Typography>
+          </CardContent>
+        </Collapse>
+      )}
     </Card>
   );
 }

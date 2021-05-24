@@ -19,9 +19,9 @@ const useStyles = makeStyles((theme) => ({
     scrollbarWidth: "none",
     backgroundColor: theme.palette.background.paper,
     padding: "5px",
-    [theme.breakpoints.down('650')]:{
+    [theme.breakpoints.down("650")]: {
       height: "65vh",
-    }
+    },
   },
   root: {
     flexGrow: 1,
@@ -54,26 +54,31 @@ function Home() {
   const classes = useStyles();
   const matches = useMediaQuery("(min-width:650px)");
 
-  const [textMsg, setTextMsg] = useState('');
-  const [image, setImage] = useState(null)
+  const [textMsg, setTextMsg] = useState("");
+  const [image, setImage] = useState(null);
 
-  const messageChange = (text) =>{
-    setTextMsg(text)
-  }
+  const messageChange = (text) => {
+    setTextMsg(text);
+  };
 
-  const messageSend = () =>{
-    console.log(textMsg)
-  }
-  const imageSelect = () =>{
-
-  }
+  const messageSend = () => {
+    console.log(textMsg);
+  };
+  const imageSelect = () => {};
 
   return (
     <div className={classes.root}>
-      <AppBar />
       <Grid container spacing={3}>
         <Grid item xs className={classes.info}>
-          <Profile />
+          <Profile
+            user={{
+              fullname: "Aman Mool",
+              status: "online",
+              email: "AmanMool@gmail.com",
+              address: "Bhaktapur, Radhe-Radhe",
+              username: "AmanMool",
+            }}
+          />
           <MessageDividers />
         </Grid>
         <Grid item xs={matches ? 6 : 12}>
@@ -83,10 +88,16 @@ function Home() {
           <Divider />
           <List className={classes.messageList}>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((item, i) => {
-              return <MessageView sent={item % 2 == 0 ? true : false} />;
+              return (
+                <MessageView key={item} sent={item % 2 == 0 ? true : false} />
+              );
             })}
           </List>
-          <InputMessage messageSend = {messageSend} messageChange = {messageChange} imageSelect = {imageSelect}/>
+          <InputMessage
+            messageSend={messageSend}
+            messageChange={messageChange}
+            imageSelect={imageSelect}
+          />
         </Grid>
         <Grid item xs className={classes.friendsList}>
           <FriendsList />

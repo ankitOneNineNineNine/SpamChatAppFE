@@ -15,6 +15,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import MailIcon from "@material-ui/icons/Mail";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
+import { withRouter } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -80,7 +81,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Navbar() {
+function Navbar({history}) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -116,7 +117,7 @@ export default function Navbar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <MenuItem onClick={()=>{history.push('/profile')}}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
     </Menu>
   );
@@ -219,3 +220,5 @@ export default function Navbar() {
     </div>
   );
 }
+
+export default withRouter(Navbar)
