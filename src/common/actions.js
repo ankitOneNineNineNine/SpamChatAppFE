@@ -11,7 +11,8 @@ export const setUser = (credentials) => {
       displaySuccess(`Welcome ${user.username}`)
       dispatch({ type: SET_USER_SUCCESS, payload: user });
     } catch (error) {
-      displayError(`Error ${error.response.data}`)
+      console.log(error)
+      displayError(`Error ${error.response? error.response.data: ''}`)
     }
   };
 };
