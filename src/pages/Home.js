@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
@@ -9,6 +9,7 @@ import { Divider, List, Typography, useMediaQuery } from "@material-ui/core";
 import Profile from "../components/profile.component";
 import AppBar from "../components/Drawer.component";
 import FriendsList from "../components/friendsList.component";
+import InputMessage from "../components/inputMessage.component";
 
 const useStyles = makeStyles((theme) => ({
   messageList: {
@@ -18,6 +19,9 @@ const useStyles = makeStyles((theme) => ({
     scrollbarWidth: "none",
     backgroundColor: theme.palette.background.paper,
     padding: "5px",
+    [theme.breakpoints.down('650')]:{
+      height: "65vh",
+    }
   },
   root: {
     flexGrow: 1,
@@ -49,6 +53,21 @@ const useStyles = makeStyles((theme) => ({
 function Home() {
   const classes = useStyles();
   const matches = useMediaQuery("(min-width:650px)");
+
+  const [textMsg, setTextMsg] = useState('');
+  const [image, setImage] = useState(null)
+
+  const messageChange = (text) =>{
+    setTextMsg(text)
+  }
+
+  const messageSend = () =>{
+    console.log(textMsg)
+  }
+  const imageSelect = () =>{
+
+  }
+
   return (
     <div className={classes.root}>
       <AppBar />
@@ -67,6 +86,7 @@ function Home() {
               return <MessageView sent={item % 2 == 0 ? true : false} />;
             })}
           </List>
+          <InputMessage messageSend = {messageSend} messageChange = {messageChange} imageSelect = {imageSelect}/>
         </Grid>
         <Grid item xs className={classes.friendsList}>
           <FriendsList />
