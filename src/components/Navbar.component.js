@@ -16,10 +16,13 @@ import MailIcon from "@material-ui/icons/Mail";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import { withRouter } from "react-router";
-import { Modal } from "@material-ui/core";
+import { ClickAwayListener, Modal, Portal } from "@material-ui/core";
 import Profile from "./profile.component";
 import { useSelector } from "react-redux";
-
+import FacebookIcon from "@material-ui/icons/Facebook";
+import { NavLink } from "react-router-dom";
+import NewMessage from "../pages/message";
+import NewNotifs from "../pages/notifications";
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
@@ -85,31 +88,33 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Navbar({ history }) {
-  const user = useSelector(state=>state.user.user)
+  const user = useSelector((state) => state.user.user);
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
-  const [profileModalOpen, setProfileModalOpen] = useState(false)
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-  const [peopleSrcText, setPeopleSrcText] = useState('')
+  const [peopleSrcText, setPeopleSrcText] = useState("");
+  const [notifsOpen, setNotifsOpen] = useState(false);
+  const [msgOpen, setMsgOpen] = useState(false);
 
-
-  const searchPeopleChange = (e) =>{
-    console.log(e.target.value)
-    setPeopleSrcText(e.target.value)
-  }
+  const searchPeopleChange = (e) => {
+    setPeopleSrcText(e.target.value);
+  };
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
   };
-
-  const handleProfileClose = _ =>{
-    setProfileModalOpen(false)
-  }
-  const handleProfileOpen = _ =>{
-    setProfileModalOpen(true)
-  }
+  const handleProfileMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleProfileClose = (_) => {
+    setProfileModalOpen(false);
+  };
+  const handleProfileOpen = (_) => {
+    setProfileModalOpen(true);
+  };
   const handleMenuClose = () => {
     setAnchorEl(null);
     handleMobileMenuClose();
@@ -130,22 +135,25 @@ function Navbar({ history }) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem
-        onClick={handleProfileOpen}
-      >
-        Profile
-      </MenuItem>
-    
-        <Modal
-          open={profileModalOpen}
-          onClose={handleProfileClose}
-          aria-labelledby="simple-modal-title"
-          aria-describedby="simple-modal-description"
-        >
-          <Profile user={user} />
-        </Modal>
+      <MenuItem onClick={handleProfileOpen}>Profile</MenuItem>
 
-      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+      <Modal
+        open={profileModalOpen}
+        onClose={handleProfileClose}
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+      >
+        <Profile user={user} />
+      </Modal>
+
+      <MenuItem
+        onClick={() => {
+          localStorage.clear();
+          history.push("/");
+        }}
+      >
+        Logout
+      </MenuItem>
     </Menu>
   );
 
@@ -160,7 +168,13 @@ function Navbar({ history }) {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem>
+      <MenuItem
+        onClick={() => {
+          setMsgOpen(false);
+          setNotifsOpen(false);
+          history.push("/message");
+        }}
+      >
         <IconButton aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={4} color="secondary">
             <MailIcon />
@@ -168,15 +182,26 @@ function Navbar({ history }) {
         </IconButton>
         <p>Messages</p>
       </MenuItem>
-      <MenuItem onClick = {handleProfileOpen}>
+      <MenuItem
+        onClick={() => {
+          history.push("/notifications");
+        }}
+      >
+        <IconButton aria-label="show 11 new notifications" color="inherit">
+          <Badge badgeContent={11} color="secondary">
+            <NotificationsIcon />
+          </Badge>
+        </IconButton>
+        <p>Notifications</p>
+      </MenuItem>
+      <MenuItem onClick={handleProfileOpen}>
         <IconButton
           aria-label="account of current user"
           aria-controls="primary-search-account-menu"
           aria-haspopup="true"
           color="inherit"
-          
         >
-          <AccountCircle/>
+          <AccountCircle />
         </IconButton>
         <p>Profile</p>
       </MenuItem>
@@ -186,6 +211,10 @@ function Navbar({ history }) {
           aria-controls="primary-search-account-menu"
           aria-haspopup="true"
           color="inherit"
+          onClick={() => {
+            localStorage.clear();
+            history.push("/");
+          }}
         >
           <ExitToAppIcon />
         </IconButton>
@@ -195,57 +224,102 @@ function Navbar({ history }) {
   );
 
   return (
-    <div className={classes.grow}>
-      <AppBar position="static">
-        <Toolbar>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon/>
-            </div>
-            <InputBase
-              placeholder="Search People"
-              onChange = {searchPeopleChange}
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
+    <ClickAwayListener
+      onClickAway={() => {
+        setMsgOpen(false);
+        setNotifsOpen(false);
+      }}
+    >
+      <div className={classes.grow}>
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton
+              edge="start"
+              className={classes.menuButton}
+              color="inherit"
+              aria-label="menu"
+              onClick={() => {
+                setMsgOpen(false);
+                setNotifsOpen(false);
+                history.push("/");
               }}
-              inputProps={{ "aria-label": "search" }}
-            />
-          </div>
-          <div className={classes.grow} />
-          <div className={classes.sectionDesktop}>
-            <IconButton aria-label="new mails" color="inherit">
-              <Badge badgeContent={10} color="secondary">
-                <MailIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileOpen}
-              color="inherit"
             >
-              <AccountCircle />
+              <FacebookIcon />
             </IconButton>
+            <div className={classes.search}>
+              <div className={classes.searchIcon}>
+                <SearchIcon />
+              </div>
+              <InputBase
+                placeholder="Search People"
+                onChange={searchPeopleChange}
+                classes={{
+                  root: classes.inputRoot,
+                  input: classes.inputInput,
+                }}
+                inputProps={{ "aria-label": "search" }}
+              />
+            </div>
+            <div className={classes.grow} />
+            <div className={classes.sectionDesktop}>
+              <IconButton
+                aria-label="new mails"
+                color="inherit"
+                onClick={() => {
+                  setMsgOpen(!msgOpen);
+                  setNotifsOpen(false);
+                }}
+              >
+                <Badge badgeContent={10} color="secondary">
+                  <MailIcon />
+                </Badge>
+              </IconButton>
+              <IconButton
+                aria-label="show 17 new notifications"
+                color="inherit"
+                onClick={() => {
+                  setMsgOpen(false);
+                  setNotifsOpen(!notifsOpen);
+                }}
+              >
+                <Badge badgeContent={17} color="secondary">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+              <IconButton
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
+            </div>
+            <div className={classes.sectionMobile}>
+              <IconButton
+                aria-label="show more"
+                aria-controls={mobileMenuId}
+                aria-haspopup="true"
+                onClick={handleMobileMenuOpen}
+                color="inherit"
+              >
+                <MoreIcon />
+              </IconButton>
+            </div>
+          </Toolbar>
+        </AppBar>
+        {renderMobileMenu}
+        {renderMenu}
+        {msgOpen ? (
+          <div>
+            <NewMessage />
           </div>
-          <div className={classes.sectionMobile}>
-            <IconButton
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <MoreIcon />
-            </IconButton>
-          </div>
-        </Toolbar>
-      </AppBar>
-      {renderMobileMenu}
-      {renderMenu}
-    </div>
+        ) : null}
+        {notifsOpen ? <NewNotifs /> : null}
+      </div>
+    </ClickAwayListener>
   );
 }
 

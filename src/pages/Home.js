@@ -14,7 +14,7 @@ import LDrawer from "../components/Drawer.component";
 
 const useStyles = makeStyles((theme) => ({
   messageList: {
-    height: "70vh",
+    height: "71vh",
     overflowY: "scroll",
     overflowX: "hidden",
     scrollbarWidth: "none",
@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
   },
   info: {
     marginTop: "10px",
-    height: "80vh",
+    height: "90vh",
     overflowY: "scroll",
     [theme.breakpoints.down("650")]: {
       display: "none",
@@ -78,7 +78,7 @@ function Home() {
   };
   const messageSend = () => {
     console.log("textMessage=>", textMsg, "images=>", images);
-    console.log();
+
   };
   const imageSelect = (e) => {
     setImages([...images, ...e.target.files]);

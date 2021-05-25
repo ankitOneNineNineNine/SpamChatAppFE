@@ -18,7 +18,7 @@ import { Typography } from "@material-ui/core";
 const useStyles = makeStyles((theme) => ({
   list: {
     width: 250,
-    height: "80vh",
+    height: "90vh",
     overflowY: "scroll",
     minHeight: "500px",
     [theme.breakpoints.down("850")]: {
@@ -46,8 +46,8 @@ export default function FriendsList({ toggleDrawer }) {
         [classes.fullList]: "right",
       })}
       role="presentation"
-      onClick={() => toggleDrawer("right", false)}
-      onKeyDown={() => toggleDrawer("right", false)}
+      onClick={() => toggleDrawer && toggleDrawer("right", false)}
+      onKeyDown={() => toggleDrawer && toggleDrawer("right", false)}
     >
       <Typography variant="h5" className={classes.headingFriends}>
         Friends
@@ -56,7 +56,7 @@ export default function FriendsList({ toggleDrawer }) {
       <List>
         {["Inbox", "Starred", "Send email", "Drafts", "Others"].map(
           (text, index) => (
-            <ListItem key = {index}>
+            <ListItem key={index}>
               <ListItemAvatar>
                 <Avatar>
                   <ImageIcon />
@@ -70,7 +70,7 @@ export default function FriendsList({ toggleDrawer }) {
       <Divider />
       <List>
         {["All mail", "Trash", "Spam"].map((text, index) => (
-          <ListItem key = {index}>
+          <ListItem key={index}>
             <ListItemAvatar>
               <Avatar>
                 <ImageIcon />
