@@ -68,9 +68,9 @@ const useStyles = makeStyles((theme) => ({
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create("width"),
-    width: "100%",
+    width: '100%',
     [theme.breakpoints.up("md")]: {
-      width: "20ch",
+      width: "30ch",
     },
   },
   sectionDesktop: {
@@ -248,10 +248,10 @@ function Navbar({ history }) {
             </IconButton>
             <div className={classes.search}>
               <div className={classes.searchIcon}>
-                <SearchIcon />
+                <SearchIcon/>
               </div>
               <InputBase
-                placeholder="Search People"
+                placeholder="Search People & Groups"
                 onChange={searchPeopleChange}
                 classes={{
                   root: classes.inputRoot,

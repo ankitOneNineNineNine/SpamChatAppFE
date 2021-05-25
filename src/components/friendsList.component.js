@@ -50,7 +50,7 @@ export default function FriendsList({ toggleDrawer }) {
       onKeyDown={() => toggleDrawer && toggleDrawer("right", false)}
     >
       <Typography variant="h5" className={classes.headingFriends}>
-        Friends
+        Friends & Groups
       </Typography>
       <Divider />
       <List>
