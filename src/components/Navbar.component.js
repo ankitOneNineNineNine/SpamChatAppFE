@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { fade, makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -11,11 +11,14 @@ import Menu from "@material-ui/core/Menu";
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import MailIcon from "@material-ui/icons/Mail";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import { withRouter } from "react-router";
+import { Modal } from "@material-ui/core";
+import Profile from "./profile.component";
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -81,22 +84,32 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Navbar({history}) {
+function Navbar({ history }) {
+  const user = useSelector(state=>state.user.user)
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
+  const [profileModalOpen, setProfileModalOpen] = useState(false)
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const [peopleSrcText, setPeopleSrcText] = useState('')
 
-  const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+
+  const searchPeopleChange = (e) =>{
+    console.log(e.target.value)
+    setPeopleSrcText(e.target.value)
+  }
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
   };
 
+  const handleProfileClose = _ =>{
+    setProfileModalOpen(false)
+  }
+  const handleProfileOpen = _ =>{
+    setProfileModalOpen(true)
+  }
   const handleMenuClose = () => {
     setAnchorEl(null);
     handleMobileMenuClose();
@@ -117,7 +130,21 @@ function Navbar({history}) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={()=>{history.push('/profile')}}>Profile</MenuItem>
+      <MenuItem
+        onClick={handleProfileOpen}
+      >
+        Profile
+      </MenuItem>
+    
+        <Modal
+          open={profileModalOpen}
+          onClose={handleProfileClose}
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+        >
+          <Profile user={user} />
+        </Modal>
+
       <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
     </Menu>
   );
@@ -141,14 +168,15 @@ function Navbar({history}) {
         </IconButton>
         <p>Messages</p>
       </MenuItem>
-      <MenuItem>
+      <MenuItem onClick = {handleProfileOpen}>
         <IconButton
           aria-label="account of current user"
           aria-controls="primary-search-account-menu"
           aria-haspopup="true"
           color="inherit"
+          
         >
-          <AccountCircle />
+          <AccountCircle/>
         </IconButton>
         <p>Profile</p>
       </MenuItem>
@@ -170,13 +198,13 @@ function Navbar({history}) {
     <div className={classes.grow}>
       <AppBar position="static">
         <Toolbar>
-    
           <div className={classes.search}>
             <div className={classes.searchIcon}>
-              <SearchIcon />
+              <SearchIcon/>
             </div>
             <InputBase
               placeholder="Search People"
+              onChange = {searchPeopleChange}
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput,
@@ -196,7 +224,7 @@ function Navbar({history}) {
               aria-label="account of current user"
               aria-controls={menuId}
               aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
+              onClick={handleProfileOpen}
               color="inherit"
             >
               <AccountCircle />
@@ -221,4 +249,4 @@ function Navbar({history}) {
   );
 }
 
-export default withRouter(Navbar)
+export default withRouter(Navbar);

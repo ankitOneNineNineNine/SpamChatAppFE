@@ -61,6 +61,7 @@ export default function Profile({ user }) {
           ? {
               display: "block",
               margin: "auto",
+              marginTop: '60px'
             }
           : null
       }
@@ -84,7 +85,9 @@ export default function Profile({ user }) {
           <Tooltip title="Edit">
             <IconButton aria-label="Edit">
               <EditIcon />
-              <Typography variant="caption" style = {{fontWeight: 'bolder'}}>Edit</Typography>
+              <Typography variant="caption" style={{ fontWeight: "bolder" }}>
+                Edit
+              </Typography>
             </IconButton>
           </Tooltip>
         ) : (

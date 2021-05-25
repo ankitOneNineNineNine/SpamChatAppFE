@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
@@ -10,6 +10,7 @@ import Profile from "../components/profile.component";
 import AppBar from "../components/Drawer.component";
 import FriendsList from "../components/friendsList.component";
 import InputMessage from "../components/inputMessage.component";
+import LDrawer from "../components/Drawer.component";
 
 const useStyles = makeStyles((theme) => ({
   messageList: {
@@ -19,6 +20,9 @@ const useStyles = makeStyles((theme) => ({
     scrollbarWidth: "none",
     backgroundColor: theme.palette.background.paper,
     padding: "5px",
+    [theme.breakpoints.down("850")]: {
+      height: "63vh",
+    },
     [theme.breakpoints.down("650")]: {
       height: "65vh",
     },
@@ -53,21 +57,36 @@ const useStyles = makeStyles((theme) => ({
 function Home() {
   const classes = useStyles();
   const matches = useMediaQuery("(min-width:650px)");
+  const msgRef = useRef(null);
+
+  useEffect(() => {
+    let ht = msgRef.current.scrollHeight;
+    msgRef.current.scrollTo({ top: ht });
+  }, [msgRef]);
 
   const [textMsg, setTextMsg] = useState("");
-  const [image, setImage] = useState(null);
+  const [images, setImages] = useState([]);
 
   const messageChange = (text) => {
     setTextMsg(text);
   };
+  const removeImage = (i) => {
+    let imgs = [...images];
+    imgs.splice(i, 1);
 
-  const messageSend = () => {
-    console.log(textMsg);
+    setImages(imgs);
   };
-  const imageSelect = () => {};
+  const messageSend = () => {
+    console.log("textMessage=>", textMsg, "images=>", images);
+    console.log();
+  };
+  const imageSelect = (e) => {
+    setImages([...images, ...e.target.files]);
+  };
 
   return (
     <div className={classes.root}>
+      <LDrawer />
       <Grid container spacing={3}>
         <Grid item xs className={classes.info}>
           <Profile
@@ -86,7 +105,7 @@ function Home() {
             Aman Mool
           </Typography>
           <Divider />
-          <List className={classes.messageList}>
+          <List className={classes.messageList} ref={msgRef}>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((item, i) => {
               return (
                 <MessageView key={item} sent={item % 2 == 0 ? true : false} />
@@ -97,6 +116,8 @@ function Home() {
             messageSend={messageSend}
             messageChange={messageChange}
             imageSelect={imageSelect}
+            removeImage={removeImage}
+            images={images}
           />
         </Grid>
         <Grid item xs className={classes.friendsList}>
