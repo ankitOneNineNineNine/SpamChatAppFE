@@ -48,17 +48,16 @@ export default function Profile({ user, sentNotifs = () => false }) {
   const classes = useStyles();
   const me = useSelector((state) => state.user);
   const [expanded, setExpanded] = React.useState(false);
-  const socket = useContext(SocketContext);
+  const { socket } = useContext(SocketContext);
   const [sent, setSent] = useState(false);
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
-
   useState(() => {
     if (sentNotifs(user)) {
       setSent(true);
     }
-  }, []);
+  }, [me]);
   if (!me.user || me.isLoading) {
     return <CircularProgress />;
   }
@@ -67,11 +66,6 @@ export default function Profile({ user, sentNotifs = () => false }) {
     return <CircularProgress />;
   }
 
-  const friend = (user) => {
-    return me.user.friends.findIndex((p) => p._id === user._id) < 0
-      ? false
-      : true;
-  };
   const sendFrReq = (e) => {
     setSent(true);
     socket.emit("friendReqSend", {
@@ -116,7 +110,7 @@ export default function Profile({ user, sentNotifs = () => false }) {
               </Typography>
             </IconButton>
           </Tooltip>
-        ) : friend(user) ? (
+        ) : me.user.friends.findIndex((p) => p._id === user._id) >= 0 ? (
           <Tooltip title="Already Friends">
             <IconButton aria-label="Friend">
               <EmojiPeopleIcon />

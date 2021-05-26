@@ -21,8 +21,8 @@ export const POST = (
   secured = false,
   contentType = "application/json"
 ) => {
-  let Authorization =  secured ? localStorage.getItem("i_hash") : null
-  
+  let Authorization = secured ? localStorage.getItem("i_hash") : null;
+
   return http({
     method: "POST",
     url,
@@ -51,18 +51,12 @@ export const PUT = (
   }).then((data) => data.data);
 };
 
-export const REMOVE = (
-  url,
-  body = {},
-  secured = false,
-  contentType = "application/json"
-) => {
+export const REMOVE = (url, secured = false) => {
   return http({
     method: "DELETE",
     url,
-    data: body,
     headers: {
-      "Content-Type": contentType,
+      "Content-Type": "application/json",
       Authorization: secured ? localStorage.getItem("i_hash") : null,
     },
   }).then((data) => data.data);

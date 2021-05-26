@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -20,6 +20,7 @@ function Login({ history }) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
   const [credentials, setCredentials] = useState({});
+  
   const loginChange = (e) => {
     let { name, value } = e.target;
     setCredentials({ ...credentials, [name]: value });

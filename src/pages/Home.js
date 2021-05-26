@@ -20,7 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { MsgContext } from "../contexts/message.context";
 import { SocketContext } from "../contexts/socket.context";
 import { setCurrentMessaging } from "../common/actions";
-
+import * as io from "socket.io-client";
 const useStyles = makeStyles((theme) => ({
   messageList: {
     height: "71vh",
@@ -69,9 +69,11 @@ function Home() {
   const msgRef = useRef(null);
   const user = useSelector((state) => state.user.user);
   const { messages, setMsg } = useContext(MsgContext);
-  const socket = useContext(SocketContext);
+
   const currentMsging = useSelector((state) => state.currentMsging.info);
   const dispatch = useDispatch();
+  const { socket, setSocket } = useContext(SocketContext);
+ 
   useEffect(() => {
     if (user) {
       dispatch(setCurrentMessaging(user.friends[0]));

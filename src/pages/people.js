@@ -16,10 +16,11 @@ const useStyles = makeStyles((theme) => ({
 export default function People() {
   const classes = useStyles();
   const people = useSelector((state) => state.people.people);
-  const notifs = useContext(NotifContext);
+  const {notifications} = useContext(NotifContext);
   
   const sentNotifs = (u) => {
-    let ind = notifs.findIndex((n) => n.to._id === u._id);
+
+    let ind = notifications.findIndex((n) => n.to._id === u._id);
     console.log(u, ind)
     if (ind < 0) {
       return false;

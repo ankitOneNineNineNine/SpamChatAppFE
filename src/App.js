@@ -9,7 +9,7 @@ import * as io from "socket.io-client";
 import { MsgContextProvider } from "./contexts/message.context";
 import { SocketContextProvider } from "./contexts/socket.context";
 import { NotifContextProvider } from "./contexts/notification.context";
-import { GET } from "./adapters/http.adapter";
+import { GET, PUT, REMOVE } from "./adapters/http.adapter";
 import { displaySuccess } from "./common/toaster";
 function App() {
   const dispatch = useDispatch();
@@ -22,19 +22,22 @@ function App() {
     if (hash) {
       dispatch(setUser({ token: hash }));
     }
-    let s = io("http://localhost:8000", {
-      auth: {
-        token: localStorage.getItem("i_hash"),
-      },
-    });
-    setSocket(s);
-  }, []);
+    if (hash) {
+      let s = io("http://localhost:8000", {
+        auth: {
+          token: localStorage.getItem("i_hash"),
+        },
+      });
+
+      setSocket(s);
+    }
+  }, [localStorage.getItem("i_hash")]);
 
   useEffect(() => {
-    GET("/user/messages", true).then((m) => {
+    GET("/message", true).then((m) => {
       setMessages([...m]);
     });
-    GET("/user/notifications", true).then((n) => {
+    GET("/notifs", true).then((n) => {
       setNotifs([...n]);
     });
   }, [user]);
@@ -42,21 +45,41 @@ function App() {
   useEffect(() => {
     if (socket) {
       socket.on("msgR", function (msg) {
-        setMessages((state) => [...state, msg]);
+        if (messages.findIndex((ms) => ms._id !== msg._id)) {
+          console.log(msg);
+          setMessages((state) => [...state, msg]);
+        }
       });
       socket.on("friendReqReceived", function (notification) {
-        setNotifs((state) => [...state, notification]);
+        if (notifs.findIndex((ms) => ms._id !== notification._id)) {
+          setNotifs((state) => [...state, notification]);
+        }
       });
-      socket.on("doneFr", (msg) => {
-        displaySuccess(msg);
+      socket.on("doneFr", async (msg) => {
+        displaySuccess(msg.msg);
+        dispatch(setUser({ token: localStorage.getItem("i_hash") }));
+        let newNotifs = await PUT(`/notifs/${msg.id}`, { accepted: true }, true);
+        let ntfs = notifs;
+        let i = ntfs.findIndex((n) => n._id === msg._id);
+        ntfs[i] = newNotifs.accepted;
+        setNotifs(ntfs);
+      });
+      socket.on("newFriend", async (msg) => {
+        dispatch(setUser({ token: localStorage.getItem("i_hash") }));
+        GET("/notifs", true).then((n) => {
+          setNotifs([...n]);
+        });
       });
     }
   }, [socket]);
+
   return (
     <>
-      <SocketContextProvider socket={socket}>
+      <SocketContextProvider socket={{ socket, setSocket }}>
         <MsgContextProvider messages={{ messages, setMsg: setMessages }}>
-          <NotifContextProvider notifs={{notifications: notifs,setNotifications:  setNotifs}}>
+          <NotifContextProvider
+            notifs={{ notifications: notifs, setNotifications: setNotifs }}
+          >
             <AppRouter />
           </NotifContextProvider>
         </MsgContextProvider>

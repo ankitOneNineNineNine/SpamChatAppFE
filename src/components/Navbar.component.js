@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { fade, makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -16,7 +16,7 @@ import MailIcon from "@material-ui/icons/Mail";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import { withRouter } from "react-router";
-import { ClickAwayListener, Modal, Portal } from "@material-ui/core";
+import { CardMedia, ClickAwayListener, Modal, Portal } from "@material-ui/core";
 import Profile from "./profile.component";
 import { useDispatch, useSelector } from "react-redux";
 import FacebookIcon from "@material-ui/icons/Facebook";
@@ -25,9 +25,15 @@ import NewMessage from "../pages/message";
 import NewNotifs from "../pages/notifications";
 import { POST } from "../adapters/http.adapter";
 import { searchPeople } from "../common/actions";
+import { SocketContext } from "../contexts/socket.context";
+import { NotifContext } from "../contexts/notification.context";
+
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
+  },
+  media: {
+    width: "50px",
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -100,12 +106,21 @@ function Navbar({ history }) {
   const [peopleSrcText, setPeopleSrcText] = useState("");
   const [notifsOpen, setNotifsOpen] = useState(false);
   const [msgOpen, setMsgOpen] = useState(false);
+  const { socket, setSocket } = useContext(SocketContext);
+  const {notifications} = useContext(NotifContext)
   const dispatch = useDispatch();
   const search = (e) => {
     if (e.key === "Enter") {
       dispatch(searchPeople(peopleSrcText));
-      history.push('/people')
+      history.push("/people");
     }
+  };
+
+  const logout = () => {
+    localStorage.clear();
+    socket.emit("logout", "logout");
+    setSocket(null);
+    history.push("/login");
   };
   const searchPeopleChange = (e) => {
     setPeopleSrcText(e.target.value);
@@ -154,14 +169,7 @@ function Navbar({ history }) {
         <Profile user={user} />
       </Modal>
 
-      <MenuItem
-        onClick={() => {
-          localStorage.clear();
-          history.push("/login");
-        }}
-      >
-        Logout
-      </MenuItem>
+      <MenuItem onClick={logout}>Logout</MenuItem>
     </Menu>
   );
 
@@ -196,7 +204,7 @@ function Navbar({ history }) {
         }}
       >
         <IconButton aria-label="show 11 new notifications" color="inherit">
-          <Badge badgeContent={11} color="secondary">
+          <Badge badgeContent={notifications.length} color="secondary">
             <NotificationsIcon />
           </Badge>
         </IconButton>
@@ -213,12 +221,7 @@ function Navbar({ history }) {
         </IconButton>
         <p>Profile</p>
       </MenuItem>
-      <MenuItem
-        onClick={() => {
-          localStorage.clear();
-          history.push("/login");
-        }}
-      >
+      <MenuItem onClick={logout}>
         <IconButton
           aria-label="logout"
           aria-controls="primary-search-account-menu"
@@ -253,7 +256,11 @@ function Navbar({ history }) {
                 history.push("/");
               }}
             >
-              <FacebookIcon />
+              <img
+                className={classes.media}
+                src={process.env.PUBLIC_URL + "/logo.png"}
+                title="Logo"
+              />
             </IconButton>
             <div className={classes.search}>
               <div className={classes.searchIcon}>
@@ -285,14 +292,14 @@ function Navbar({ history }) {
                 </Badge>
               </IconButton>
               <IconButton
-                aria-label="show 17 new notifications"
+                aria-label="show new notifications"
                 color="inherit"
                 onClick={() => {
                   setMsgOpen(false);
                   setNotifsOpen(!notifsOpen);
                 }}
               >
-                <Badge badgeContent={17} color="secondary">
+                <Badge badgeContent={notifications.length} color="secondary">
                   <NotificationsIcon />
                 </Badge>
               </IconButton>

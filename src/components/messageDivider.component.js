@@ -10,7 +10,6 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import LabelIcon from "@material-ui/icons/Label";
 import DraftsIcon from "@material-ui/icons/Drafts";
 
-
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
@@ -21,9 +20,7 @@ const useStyles = makeStyles((theme) => ({
   inbox: {
     color: "green",
   },
-  trash: {
-    color: "red",
-  },
+
   spam: {
     color: "blue",
   },
@@ -54,21 +51,10 @@ export default function MessageDividers() {
           </ListItemIcon>
           <ListItemText primary="Inbox" />
         </ListItem>
-
-        <ListItem
-          button
-          selected={selectedIndex === 1}
-          onClick={(e) => handleListItemClick(e, 1)}
-        >
-          <ListItemIcon>
-            <DeleteIcon className={classes.trash} />
-          </ListItemIcon>
-          <ListItemText primary="Trash" />
-        </ListItem>
         <ListItem
           button
           selected={selectedIndex === 2}
-          onClick={(e) => handleListItemClick(e, 2)}
+          onClick={(e) => handleListItemClick(e, 1)}
         >
           <ListItemIcon>
             <LabelIcon className={classes.spam} />
