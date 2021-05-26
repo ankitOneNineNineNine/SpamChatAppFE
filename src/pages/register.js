@@ -12,7 +12,7 @@ import { NavLink, withRouter } from "react-router-dom";
 import { GET, POST } from "../adapters/http.adapter";
 import { displayError, displayInfo, displaySuccess } from "../common/toaster";
 
-function Register({history}) {
+function Register({ history }) {
   const classes = useformStyles();
 
   const [usedCreds, setUsedCreds] = useState([]);
@@ -24,7 +24,13 @@ function Register({history}) {
       .then((usedC) => {
         setUsedCreds(usedC);
       })
-      .catch((err) => alert(err.response.data.msg));
+      .catch((err) => {
+        err &&
+          err.response &&
+          err.response.data &&
+          err.response.data.message &&
+          displayError(err.response.data.message);
+      });
   }, []);
 
   useEffect(() => {
@@ -36,6 +42,17 @@ function Register({history}) {
     setCredentials({ ...credentials, [name]: value });
   };
   const validate = () => {
+    if (!credentials.fullname) {
+      setFormError((prev) => ({
+        ...prev,
+        fullname: "Please Fill Fullname",
+      }));
+    } else {
+      setFormError((prev) => ({
+        ...prev,
+        fullname: null,
+      }));
+    }
     if (!credentials.email) {
       setFormError((prev) => ({
         ...prev,
@@ -71,8 +88,9 @@ function Register({history}) {
         username: "Please Fill Username",
       }));
     } else {
-      
-      if (usedCreds.findIndex((d) => d.username === credentials.username) > -1) {
+      if (
+        usedCreds.findIndex((d) => d.username === credentials.username) > -1
+      ) {
         setFormError({
           ...formError,
           username: "Username is already taken",
@@ -83,17 +101,6 @@ function Register({history}) {
           username: null,
         }));
       }
-    }
-    if (!credentials.address) {
-      setFormError((prev) => ({
-        ...prev,
-        address: "Please Fill Address",
-      }));
-    } else {
-      setFormError((prev) => ({
-        ...prev,
-        address: null,
-      }));
     }
     if (!credentials.password) {
       setFormError((prev) => ({
@@ -127,16 +134,14 @@ function Register({history}) {
       }
     }
     if (!error) {
-      try{
-        let response = await POST('/auth/register', credentials);
-        displaySuccess('Successfully Registered!')
-        history.push('/login');
-        displayInfo('Please Login!')
+      try {
+        let response = await POST("/auth/register", credentials);
+        displaySuccess("Successfully Registered!");
+        history.push("/login");
+        displayInfo("Please Login!");
+      } catch (err) {
+        displayError(err.response.data.message);
       }
-      catch(err){
-        displayError(err.response.data.message)
-      }
-      
     }
   };
 
@@ -156,11 +161,28 @@ function Register({history}) {
             margin="normal"
             required
             fullWidth
+            id="fullname"
+            label="Fullname"
+            name="fullname"
+            autoFocus
+            onChange={registerChange}
+          />
+          <Typography
+            component="h5"
+            variant="caption"
+            className={classes.error}
+          >
+            {formError?.fullname}
+          </Typography>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
             id="email"
             label="Email Address"
             name="email"
             autoComplete="email"
-            autoFocus
             onChange={registerChange}
           />
           <Typography
@@ -179,7 +201,6 @@ function Register({history}) {
             label="Username"
             name="username"
             autoComplete="username"
-            autoFocus
             onChange={registerChange}
           />
           <Typography
@@ -189,7 +210,7 @@ function Register({history}) {
           >
             {formError?.username}
           </Typography>
-          <TextField
+          {/* <TextField
             variant="outlined"
             margin="normal"
             required
@@ -207,7 +228,7 @@ function Register({history}) {
             className={classes.error}
           >
             {formError?.address}
-          </Typography>
+          </Typography> */}
           <TextField
             variant="outlined"
             margin="normal"

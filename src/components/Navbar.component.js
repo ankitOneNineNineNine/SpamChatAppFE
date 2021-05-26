@@ -18,11 +18,13 @@ import MoreIcon from "@material-ui/icons/MoreVert";
 import { withRouter } from "react-router";
 import { ClickAwayListener, Modal, Portal } from "@material-ui/core";
 import Profile from "./profile.component";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import FacebookIcon from "@material-ui/icons/Facebook";
 import { NavLink } from "react-router-dom";
 import NewMessage from "../pages/message";
 import NewNotifs from "../pages/notifications";
+import { POST } from "../adapters/http.adapter";
+import { searchPeople } from "../common/actions";
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
@@ -68,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create("width"),
-    width: '100%',
+    width: "100%",
     [theme.breakpoints.up("md")]: {
       width: "30ch",
     },
@@ -98,7 +100,13 @@ function Navbar({ history }) {
   const [peopleSrcText, setPeopleSrcText] = useState("");
   const [notifsOpen, setNotifsOpen] = useState(false);
   const [msgOpen, setMsgOpen] = useState(false);
-
+  const dispatch = useDispatch();
+  const search = (e) => {
+    if (e.key === "Enter") {
+      dispatch(searchPeople(peopleSrcText));
+      history.push('/people')
+    }
+  };
   const searchPeopleChange = (e) => {
     setPeopleSrcText(e.target.value);
   };
@@ -149,7 +157,7 @@ function Navbar({ history }) {
       <MenuItem
         onClick={() => {
           localStorage.clear();
-          history.push("/");
+          history.push("/login");
         }}
       >
         Logout
@@ -205,16 +213,17 @@ function Navbar({ history }) {
         </IconButton>
         <p>Profile</p>
       </MenuItem>
-      <MenuItem>
+      <MenuItem
+        onClick={() => {
+          localStorage.clear();
+          history.push("/login");
+        }}
+      >
         <IconButton
           aria-label="logout"
           aria-controls="primary-search-account-menu"
           aria-haspopup="true"
           color="inherit"
-          onClick={() => {
-            localStorage.clear();
-            history.push("/");
-          }}
         >
           <ExitToAppIcon />
         </IconButton>
@@ -248,11 +257,12 @@ function Navbar({ history }) {
             </IconButton>
             <div className={classes.search}>
               <div className={classes.searchIcon}>
-                <SearchIcon/>
+                <SearchIcon />
               </div>
               <InputBase
                 placeholder="Search People & Groups"
                 onChange={searchPeopleChange}
+                onKeyPress={search}
                 classes={{
                   root: classes.inputRoot,
                   input: classes.inputInput,

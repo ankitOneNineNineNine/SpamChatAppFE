@@ -14,6 +14,8 @@ import Avatar from "@material-ui/core/Avatar";
 import ImageIcon from "@material-ui/icons/Image";
 import MailIcon from "@material-ui/icons/Mail";
 import { Typography } from "@material-ui/core";
+import { useDispatch } from "react-redux";
+import { setCurrentMessaging } from "../common/actions";
 
 const useStyles = makeStyles((theme) => ({
   list: {
@@ -38,8 +40,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function FriendsList({ toggleDrawer }) {
+export default function FriendsList({ friends, groups, toggleDrawer }) {
   const classes = useStyles();
+
+  const dispatch = useDispatch();
+
   return (
     <div
       className={clsx(classes.list, {
@@ -54,29 +59,38 @@ export default function FriendsList({ toggleDrawer }) {
       </Typography>
       <Divider />
       <List>
-        {["Inbox", "Starred", "Send email", "Drafts", "Others"].map(
-          (text, index) => (
-            <ListItem key={index}>
-              <ListItemAvatar>
-                <Avatar>
-                  <ImageIcon />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary="Ankit Pradhan" secondary="Online" />
-            </ListItem>
-          )
-        )}
-      </List>
-      <Divider />
-      <List>
-        {["All mail", "Trash", "Spam"].map((text, index) => (
-          <ListItem key={index}>
+        {friends.map((friend, index) => (
+          <ListItem
+            key={index}
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              dispatch(setCurrentMessaging(friend));
+            }}
+          >
             <ListItemAvatar>
               <Avatar>
                 <ImageIcon />
               </Avatar>
             </ListItemAvatar>
-            <ListItemText primary="Aman Mool" secondary="Offline" />
+            <ListItemText primary={friend.fullname} secondary={friend.status} />
+          </ListItem>
+        ))}
+      </List>
+      <Divider />
+      <List>
+        {groups.map((group, index) => (
+          <ListItem
+            key={index}
+            onClick={() => {
+              dispatch(setCurrentMessaging(group));
+            }}
+          >
+            <ListItemAvatar>
+              <Avatar>
+                <ImageIcon />
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText primary={group.name} secondary={group.status} />
           </ListItem>
         ))}
       </List>

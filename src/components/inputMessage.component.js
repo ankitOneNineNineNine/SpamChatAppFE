@@ -49,6 +49,7 @@ export default function InputMessage({
   messageChange,
   messageSend,
   imageSelect,
+  textMsg,
   removeImage,
 }) {
   const classes = useStyles();
@@ -94,6 +95,7 @@ export default function InputMessage({
         style={{ margin: 8 }}
         fullWidth
         margin="normal"
+        value={textMsg}
         InputProps={{
           endAdornment: (
             <>

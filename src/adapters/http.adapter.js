@@ -12,8 +12,7 @@ export const GET = (url, secured = false) => {
       "Content-Type": "application/json",
       Authorization: secured ? localStorage.getItem("i_hash") : null,
     },
-  })
-    .then((data) => data.data)
+  }).then((data) => data.data);
 };
 
 export const POST = (
@@ -22,6 +21,8 @@ export const POST = (
   secured = false,
   contentType = "application/json"
 ) => {
+  let Authorization =  secured ? localStorage.getItem("i_hash") : null
+  
   return http({
     method: "POST",
     url,
@@ -30,8 +31,7 @@ export const POST = (
       "Content-Type": contentType,
       Authorization: secured ? localStorage.getItem("i_hash") : null,
     },
-  })
-    .then((data) => data.data)
+  }).then((data) => data.data);
 };
 
 export const PUT = (
@@ -48,8 +48,7 @@ export const PUT = (
       "Content-Type": contentType,
       Authorization: secured ? localStorage.getItem("i_hash") : null,
     },
-  })
-    .then((data) => data.data)
+  }).then((data) => data.data);
 };
 
 export const REMOVE = (
@@ -66,6 +65,5 @@ export const REMOVE = (
       "Content-Type": contentType,
       Authorization: secured ? localStorage.getItem("i_hash") : null,
     },
-  })
-    .then((data) => data.data)
+  }).then((data) => data.data);
 };

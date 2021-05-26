@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function LDrawer() {
+export default function LDrawer({ user }) {
   const classes = useStyles();
   const [state, setState] = React.useState({
     left: false,
@@ -94,7 +94,11 @@ export default function LDrawer() {
             )}
           >
             {anchor === "friends" ? (
-              <FriendsList toggleDrawer={toggleDrawer} />
+              <FriendsList
+                toggleDrawer={toggleDrawer}
+                friends={user ? user.friends : []}
+                groups={user ? user.groups : []}
+              />
             ) : (
               <div style={{ width: "250px" }}>
                 <Profile

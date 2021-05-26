@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import Card from "@material-ui/core/Card";
@@ -18,7 +18,9 @@ import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { CircularProgress, Divider, Tooltip } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
 import { useSelector } from "react-redux";
-
+import { SocketContext } from "../contexts/socket.context";
+import CheckIcon from "@material-ui/icons/Check";
+import EmojiPeopleIcon from "@material-ui/icons/EmojiPeople";
 const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 345,
@@ -42,17 +44,41 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Profile({ user }) {
+export default function Profile({ user, sentNotifs = () => false }) {
   const classes = useStyles();
   const me = useSelector((state) => state.user);
   const [expanded, setExpanded] = React.useState(false);
-
+  const socket = useContext(SocketContext);
+  const [sent, setSent] = useState(false);
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
+  useState(() => {
+    if (sentNotifs(user)) {
+      setSent(true);
+    }
+  }, []);
   if (!me.user || me.isLoading) {
     return <CircularProgress />;
   }
+
+  if (!user) {
+    return <CircularProgress />;
+  }
+
+  const friend = (user) => {
+    return me.user.friends.findIndex((p) => p._id === user._id) < 0
+      ? false
+      : true;
+  };
+  const sendFrReq = (e) => {
+    setSent(true);
+    socket.emit("friendReqSend", {
+      from: me.user._id,
+      to: user._id,
+    });
+  };
   return (
     <Card
       className={classes.root}
@@ -61,7 +87,7 @@ export default function Profile({ user }) {
           ? {
               display: "block",
               margin: "auto",
-              marginTop: '60px'
+              marginTop: "60px",
             }
           : null
       }
@@ -90,9 +116,21 @@ export default function Profile({ user }) {
               </Typography>
             </IconButton>
           </Tooltip>
+        ) : friend(user) ? (
+          <Tooltip title="Already Friends">
+            <IconButton aria-label="Friend">
+              <EmojiPeopleIcon />
+            </IconButton>
+          </Tooltip>
+        ) : sent ? (
+          <Tooltip title="Sent Request">
+            <IconButton aria-label="Sent">
+              <CheckIcon />
+            </IconButton>
+          </Tooltip>
         ) : (
           <Tooltip title="Send Friend Request">
-            <IconButton aria-label="Send Friend Request">
+            <IconButton aria-label="Send Friend Request" onClick={sendFrReq}>
               <GroupAddIcon />
             </IconButton>
           </Tooltip>

@@ -6,10 +6,10 @@ import { applyMiddleware, combineReducers, createStore } from "redux";
 import { createLogger } from "redux-logger";
 import reportWebVitals from "./reportWebVitals";
 import thunk from "redux-thunk";
-import { setUser } from "./common/reducers";
+import { setUser, searchPeople, setCurrentMessaging } from "./common/reducers";
 const logger = createLogger();
 
-const rootReducer = combineReducers({ user: setUser });
+const rootReducer = combineReducers({ user: setUser, people: searchPeople, currentMsging: setCurrentMessaging });
 
 const store = createStore(rootReducer, applyMiddleware(logger, thunk));
 

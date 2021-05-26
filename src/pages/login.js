@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -11,13 +11,14 @@ import useformStyles from "../styles/form.useStyle";
 import { NavLink } from "react-router-dom";
 import { POST } from "../adapters/http.adapter";
 import { displayError } from "../common/toaster";
-import {useSelector, useDispatch} from 'react-redux'
+import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "../common/actions";
 
 function Login({ history }) {
   const classes = useformStyles();
-  const userState = useSelector(setUser)
+  const userState = useSelector(setUser);
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.user);
   const [credentials, setCredentials] = useState({});
   const loginChange = (e) => {
     let { name, value } = e.target;
@@ -25,11 +26,13 @@ function Login({ history }) {
   };
   const onLogin = async (e) => {
     e.preventDefault();
-    dispatch(setUser(credentials))
-    history.push("/");
-    
+    dispatch(setUser(credentials));
   };
-
+  useEffect(() => {
+    if (user && Object.keys(user).length && localStorage.getItem("i_hash")) {
+      history.push("/");
+    }
+  }, [user]);
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />

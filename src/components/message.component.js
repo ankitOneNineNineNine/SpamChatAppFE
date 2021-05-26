@@ -13,31 +13,34 @@ import { Typography } from "@material-ui/core";
 const useStyles = makeStyles((theme) => ({
   sent: {
     left: "10%",
-    width: '88%',
+    width: "88%",
     borderRadius: "10px",
     backgroundColor: "#7272f4",
-    margin: '5px',
- 
+    margin: "5px",
   },
   received: {
     backgroundColor: "#a2a2d9",
     borderRadius: "10px",
-    margin: '5x',
-   
+    margin: "5x",
   },
 }));
 
-export default function MessageView({ sent }) {
+export default function MessageView({ message, user }) {
   const classes = useStyles();
 
   return (
-    <ListItem className={sent ? classes.sent : classes.received}>
+    <ListItem
+      className={message.from._id === user._id ? classes.sent : classes.received}
+    >
       <ListItemAvatar>
         <Avatar>
           <ImageIcon />
         </Avatar>
       </ListItemAvatar>
-      <ListItemText primary="Photos, Jan 9, 2014" secondary="Hello Guyz kasto cha ta?" />
+      <ListItemText
+        primary={`${message.from.username}, Jan 9, 2014`}
+        secondary={message.text}
+      />
     </ListItem>
   );
 }
