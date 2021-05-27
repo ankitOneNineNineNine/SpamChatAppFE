@@ -39,6 +39,9 @@ const useStyles = makeStyles((theme) => ({
   media: {
     height: 0,
     paddingTop: "70.25%", // 16:9
+    [theme.breakpoints.down("400")]: {
+      paddingTop: "150px",
+    },
   },
   expand: {
     transform: "rotate(0deg)",
@@ -156,7 +159,7 @@ export default function EditProfile({ setEdit }) {
             ? URL.createObjectURL(credentials.image)
             : user.image
             ? `http://localhost:8000/profileImge/${user.image}`
-            : "https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg"
+            : `${process.env.PUBLIC_URL}/userimage.jpg`
         }
         title="Profile Picture"
       >

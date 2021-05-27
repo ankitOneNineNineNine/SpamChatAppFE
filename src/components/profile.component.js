@@ -110,7 +110,7 @@ function Profile({ user, sentNotifs = () => false }) {
         image={
           user.image
             ? `http://localhost:8000/profileImge/${user.image}`
-            : "https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg"
+            : `${process.env.PUBLIC_URL}/userimage.jpg`
         }
         title="Profile Picture"
       />

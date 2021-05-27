@@ -23,6 +23,7 @@ import { setCurrentMessaging } from "../common/actions";
 import * as io from "socket.io-client";
 import { POST } from "../adapters/http.adapter";
 import { displayError } from "../common/toaster";
+import CreateGroup from "../components/createGroup.component";
 const useStyles = makeStyles((theme) => ({
   messageList: {
     height: "71vh",
@@ -167,6 +168,7 @@ function Home() {
   return (
     <div className={classes.root}>
       <LDrawer user={user} />
+      <CreateGroup />
       <Grid container spacing={3}>
         <Grid item xs className={classes.info}>
           <Profile user={currentMsging} />
