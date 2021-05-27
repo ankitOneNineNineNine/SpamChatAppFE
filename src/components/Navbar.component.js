@@ -27,7 +27,7 @@ import { POST } from "../adapters/http.adapter";
 import { searchPeople } from "../common/actions";
 import { SocketContext } from "../contexts/socket.context";
 import { NotifContext } from "../contexts/notification.context";
-
+import CancelIcon from "@material-ui/icons/Cancel";
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
@@ -93,6 +93,15 @@ const useStyles = makeStyles((theme) => ({
       display: "none",
     },
   },
+  crossModal: {
+    position: "absolute",
+    top: "0",
+    right: 0,
+    color: "white",
+    width: 60,
+    height: 60,
+  },
+
 }));
 
 function Navbar({ history }) {
@@ -107,7 +116,7 @@ function Navbar({ history }) {
   const [notifsOpen, setNotifsOpen] = useState(false);
   const [msgOpen, setMsgOpen] = useState(false);
   const { socket, setSocket } = useContext(SocketContext);
-  const {notifications} = useContext(NotifContext)
+  const { notifications } = useContext(NotifContext);
   const dispatch = useDispatch();
   const search = (e) => {
     if (e.key === "Enter") {
@@ -159,16 +168,19 @@ function Navbar({ history }) {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleProfileOpen}>Profile</MenuItem>
-
-      <Modal
-        open={profileModalOpen}
-        onClose={handleProfileClose}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-      >
-        <Profile user={user} />
+      <Modal open={profileModalOpen} onClose={handleProfileClose}>
+        <div>
+          <IconButton
+            iconStyle={classes.crossModal}
+            aria-label="Cross"
+            className={classes.crossModal}
+            onClick={handleProfileClose}
+          >
+            <CancelIcon style = {{fontSize: '40px'}} />
+          </IconButton>
+          <Profile user={user} />
+        </div>
       </Modal>
-
       <MenuItem onClick={logout}>Logout</MenuItem>
     </Menu>
   );
@@ -236,107 +248,109 @@ function Navbar({ history }) {
   );
 
   return (
-    <ClickAwayListener
-      onClickAway={() => {
-        setMsgOpen(false);
-        setNotifsOpen(false);
-      }}
-    >
-      <div className={classes.grow}>
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton
-              edge="start"
-              className={classes.menuButton}
-              color="inherit"
-              aria-label="menu"
-              onClick={() => {
-                setMsgOpen(false);
-                setNotifsOpen(false);
-                history.push("/");
-              }}
-            >
-              <img
-                className={classes.media}
-                src={process.env.PUBLIC_URL + "/logo.png"}
-                title="Logo"
-              />
-            </IconButton>
-            <div className={classes.search}>
-              <div className={classes.searchIcon}>
-                <SearchIcon />
-              </div>
-              <InputBase
-                placeholder="Search People & Groups"
-                onChange={searchPeopleChange}
-                onKeyPress={search}
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput,
-                }}
-                inputProps={{ "aria-label": "search" }}
-              />
-            </div>
-            <div className={classes.grow} />
-            <div className={classes.sectionDesktop}>
+    <>
+      <ClickAwayListener
+        onClickAway={() => {
+          setMsgOpen(false);
+          setNotifsOpen(false);
+        }}
+      >
+        <div className={classes.grow}>
+          <AppBar position="static">
+            <Toolbar>
               <IconButton
-                aria-label="new mails"
+                edge="start"
+                className={classes.menuButton}
                 color="inherit"
-                onClick={() => {
-                  setMsgOpen(!msgOpen);
-                  setNotifsOpen(false);
-                }}
-              >
-                <Badge badgeContent={10} color="secondary">
-                  <MailIcon />
-                </Badge>
-              </IconButton>
-              <IconButton
-                aria-label="show new notifications"
-                color="inherit"
+                aria-label="menu"
                 onClick={() => {
                   setMsgOpen(false);
-                  setNotifsOpen(!notifsOpen);
+                  setNotifsOpen(false);
+                  history.push("/");
                 }}
               >
-                <Badge badgeContent={notifications.length} color="secondary">
-                  <NotificationsIcon />
-                </Badge>
+                <img
+                  className={classes.media}
+                  src={process.env.PUBLIC_URL + "/logo.png"}
+                  title="Logo"
+                />
               </IconButton>
-              <IconButton
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={menuId}
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
+              <div className={classes.search}>
+                <div className={classes.searchIcon}>
+                  <SearchIcon />
+                </div>
+                <InputBase
+                  placeholder="Search People & Groups"
+                  onChange={searchPeopleChange}
+                  onKeyPress={search}
+                  classes={{
+                    root: classes.inputRoot,
+                    input: classes.inputInput,
+                  }}
+                  inputProps={{ "aria-label": "search" }}
+                />
+              </div>
+              <div className={classes.grow} />
+              <div className={classes.sectionDesktop}>
+                <IconButton
+                  aria-label="new mails"
+                  color="inherit"
+                  onClick={() => {
+                    setMsgOpen(!msgOpen);
+                    setNotifsOpen(false);
+                  }}
+                >
+                  <Badge badgeContent={10} color="secondary">
+                    <MailIcon />
+                  </Badge>
+                </IconButton>
+                <IconButton
+                  aria-label="show new notifications"
+                  color="inherit"
+                  onClick={() => {
+                    setMsgOpen(false);
+                    setNotifsOpen(!notifsOpen);
+                  }}
+                >
+                  <Badge badgeContent={notifications.length} color="secondary">
+                    <NotificationsIcon />
+                  </Badge>
+                </IconButton>
+                <IconButton
+                  edge="end"
+                  aria-label="account of current user"
+                  aria-controls={menuId}
+                  aria-haspopup="true"
+                  onClick={handleProfileMenuOpen}
+                  color="inherit"
+                >
+                  <AccountCircle />
+                </IconButton>
+              </div>
+              <div className={classes.sectionMobile}>
+                <IconButton
+                  aria-label="show more"
+                  aria-controls={mobileMenuId}
+                  aria-haspopup="true"
+                  onClick={handleMobileMenuOpen}
+                  color="inherit"
+                >
+                  <MoreIcon />
+                </IconButton>
+              </div>
+            </Toolbar>
+          </AppBar>
+          {renderMobileMenu}
+          {renderMenu}
+          {msgOpen ? (
+            <div>
+              <NewMessage />
             </div>
-            <div className={classes.sectionMobile}>
-              <IconButton
-                aria-label="show more"
-                aria-controls={mobileMenuId}
-                aria-haspopup="true"
-                onClick={handleMobileMenuOpen}
-                color="inherit"
-              >
-                <MoreIcon />
-              </IconButton>
-            </div>
-          </Toolbar>
-        </AppBar>
-        {renderMobileMenu}
-        {renderMenu}
-        {msgOpen ? (
-          <div>
-            <NewMessage />
-          </div>
-        ) : null}
-        {notifsOpen ? <NewNotifs /> : null}
-      </div>
-    </ClickAwayListener>
+          ) : null}
+          {notifsOpen ? <NewNotifs /> : null}
+        </div>
+      </ClickAwayListener>
+    </>
   );
 }
 

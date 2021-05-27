@@ -21,6 +21,8 @@ import { MsgContext } from "../contexts/message.context";
 import { SocketContext } from "../contexts/socket.context";
 import { setCurrentMessaging } from "../common/actions";
 import * as io from "socket.io-client";
+import { POST } from "../adapters/http.adapter";
+import { displayError } from "../common/toaster";
 const useStyles = makeStyles((theme) => ({
   messageList: {
     height: "71vh",
@@ -73,7 +75,7 @@ function Home() {
   const currentMsging = useSelector((state) => state.currentMsging.info);
   const dispatch = useDispatch();
   const { socket, setSocket } = useContext(SocketContext);
- 
+
   useEffect(() => {
     if (user) {
       dispatch(setCurrentMessaging(user.friends[0]));
@@ -102,23 +104,39 @@ function Home() {
     if (!textMsg.length && !images.length) {
       return;
     }
-
-    let receiver = currentMsging.fullname
-      ? {
-          toInd: currentMsging._id,
-        }
-      : {
-          toGrp: currentMsging._id,
-        };
-    let msg = {
-      ...receiver,
-      from: user._id,
-      text: textMsg,
-    };
-    socket.emit("msgS", msg);
+    console.log(images, textMsg);
+    if (images.length) {
+      let formData = new FormData();
+      formData.append("textMsg", textMsg);
+      formData.append("from", user._id);
+      if (currentMsging.fullname) {
+        formData.append("toInd", currentMsging._id);
+      } else {
+        formData.append("toGrp", currentMsging._id);
+      }
+      images.forEach((image) => {
+        formData.append("images", image);
+      });
+      POST("/messages/", formData, true, "multipart/form-data")
+        .then((data) => socket.emit("imgMsg", data))
+        .catch((err) => displayError(err?.response?.data?.message));
+    } else {
+      let receiver = currentMsging.fullname
+        ? {
+            toInd: currentMsging._id,
+          }
+        : {
+            toGrp: currentMsging._id,
+          };
+      let msg = {
+        ...receiver,
+        from: user._id,
+        text: textMsg,
+      };
+      socket.emit("msgS", msg);
+    }
     setTextMsg("");
     setImages([]);
-    setMsg([...messages, msg]);
   };
   const imageSelect = (e) => {
     setImages([...images, ...e.target.files]);
@@ -136,7 +154,6 @@ function Home() {
   }
   let filteredMessages = [];
   if (currentMsging && currentMsging._id) {
-    console.log(messages);
     if (messages.length) {
       filteredMessages = messages.filter(
         (msg) =>

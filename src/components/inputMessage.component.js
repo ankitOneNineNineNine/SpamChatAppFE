@@ -65,7 +65,7 @@ export default function InputMessage({
         ref={inputImageRef}
         onChange={imageSelect}
         className={classes.noDisp}
-        accept="image/png, image/jpeg"
+        accept=".jpg, .jpeg, .png"
         multiple
       />
       <div className={classes.imageSelectedDisplay}>

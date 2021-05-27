@@ -34,7 +34,7 @@ function App() {
   }, [localStorage.getItem("i_hash")]);
 
   useEffect(() => {
-    GET("/message", true).then((m) => {
+    GET("/messages", true).then((m) => {
       setMessages([...m]);
     });
     GET("/notifs", true).then((n) => {
@@ -58,13 +58,18 @@ function App() {
       socket.on("doneFr", async (msg) => {
         displaySuccess(msg.msg);
         dispatch(setUser({ token: localStorage.getItem("i_hash") }));
-        let newNotifs = await PUT(`/notifs/${msg.id}`, { accepted: true }, true);
+        let newNotifs = await PUT(
+          `/notifs/${msg.id}`,
+          { accepted: true },
+          true
+        );
         let ntfs = notifs;
         let i = ntfs.findIndex((n) => n._id === msg._id);
         ntfs[i] = newNotifs.accepted;
         setNotifs(ntfs);
       });
       socket.on("newFriend", async (msg) => {
+        displaySuccess(msg.msg);
         dispatch(setUser({ token: localStorage.getItem("i_hash") }));
         GET("/notifs", true).then((n) => {
           setNotifs([...n]);

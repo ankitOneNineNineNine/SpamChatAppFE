@@ -68,8 +68,15 @@ export default function FriendsList({ friends, groups, toggleDrawer }) {
             }}
           >
             <ListItemAvatar>
-              <Avatar>
-                <ImageIcon />
+              <Avatar
+                aria-label="recipe"
+                className={classes.avatar}
+                src={
+                  friend.image &&
+                  `http://localhost:8000/profileImge/${friend.image}`
+                }
+              >
+                {friend.image ? null : friend.fullname.charAt(0)}
               </Avatar>
             </ListItemAvatar>
             <ListItemText primary={friend.fullname} secondary={friend.status} />

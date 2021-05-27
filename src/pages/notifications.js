@@ -64,7 +64,7 @@ export default function NewNotifs() {
       to: me._id,
       id,
     });
-    let ntfs = notifications.filter((n) => n.from === from);
+    let ntfs = notifications.filter((n) => n.from !== from);
     setNotifications(ntfs);
   };
   const rejectFr = (from, id) => {
@@ -74,7 +74,7 @@ export default function NewNotifs() {
       to: me._id,
       id,
     });
-    let ntfs = notifications.filter((n) => n.from === from);
+    let ntfs = notifications.filter((n) => n.from !== from);
     setNotifications(ntfs);
   };
 
@@ -93,17 +93,20 @@ export default function NewNotifs() {
       </div>
     );
   }
+  console.log(notifications);
   return (
     <div className={classes.dropdown}>
       <Typography variant="h6" style={{ textAlign: "center" }}>
         New Notifications
       </Typography>
       {notifications
-        .filter(
-          (n) =>
-            (n.to._id == me._id && !n.accepted) ||
-            (n.from._id == me._id && n.accepted)
-        )
+        .filter((n) => {
+          console.log(me, n);
+          return (
+            (n && n.to._id == me._id && !n.accepted) ||
+            (n && n.from._id == me._id && n.accepted)
+          );
+        })
         .map((notif, i) => {
           return notif.to._id == me._id ? (
             <Card className={classes.root} key={i} variant="outlined">
@@ -148,10 +151,10 @@ export default function NewNotifs() {
               variant="outlined"
               onClick={() => {
                 REMOVE(`/notifs/${notif._id}`, true);
-                setNotifications((prev) => [
-                  ...prev,
-                  prev.filter((not) => not._id !== notif._id),
-                ]);
+                console.log(notif);
+                setNotifications(
+                  notifications.filter((not) => not._id !== notif._id)
+                );
               }}
             >
               <CardContent>

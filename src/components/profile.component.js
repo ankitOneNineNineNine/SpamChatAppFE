@@ -21,6 +21,7 @@ import { useSelector } from "react-redux";
 import { SocketContext } from "../contexts/socket.context";
 import CheckIcon from "@material-ui/icons/Check";
 import EmojiPeopleIcon from "@material-ui/icons/EmojiPeople";
+import EditProfile from "./edit-profile.component";
 const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 345,
@@ -44,12 +45,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Profile({ user, sentNotifs = () => false }) {
+function Profile({ user, sentNotifs = () => false }) {
   const classes = useStyles();
   const me = useSelector((state) => state.user);
   const [expanded, setExpanded] = React.useState(false);
   const { socket } = useContext(SocketContext);
   const [sent, setSent] = useState(false);
+  const [edit, setEdit] = useState(false);
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
@@ -73,7 +75,9 @@ export default function Profile({ user, sentNotifs = () => false }) {
       to: user._id,
     });
   };
-  return (
+  return edit ? (
+    <EditProfile setEdit={setEdit} />
+  ) : (
     <Card
       className={classes.root}
       style={
@@ -88,8 +92,14 @@ export default function Profile({ user, sentNotifs = () => false }) {
     >
       <CardHeader
         avatar={
-          <Avatar aria-label="recipe" className={classes.avatar}>
-            A
+          <Avatar
+            aria-label="recipe"
+            className={classes.avatar}
+            src={
+              user.image && `http://localhost:8000/profileImge/${user.image}`
+            }
+          >
+            {user.image ? null : user.fullname.charAt(0)}
           </Avatar>
         }
         title={user.fullname}
@@ -97,12 +107,21 @@ export default function Profile({ user, sentNotifs = () => false }) {
       />
       <CardMedia
         className={classes.media}
-        image="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg"
+        image={
+          user.image
+            ? `http://localhost:8000/profileImge/${user.image}`
+            : "https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg"
+        }
         title="Profile Picture"
       />
       <CardActions disableSpacing>
         {user.username === me.user.username ? (
-          <Tooltip title="Edit">
+          <Tooltip
+            title="Edit"
+            onClick={() => {
+              setEdit(true);
+            }}
+          >
             <IconButton aria-label="Edit">
               <EditIcon />
               <Typography variant="caption" style={{ fontWeight: "bolder" }}>
@@ -162,3 +181,5 @@ export default function Profile({ user, sentNotifs = () => false }) {
     </Card>
   );
 }
+
+export default Profile;
