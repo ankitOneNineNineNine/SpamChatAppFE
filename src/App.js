@@ -46,7 +46,6 @@ function App() {
     if (socket) {
       socket.on("msgR", function (msg) {
         if (messages.findIndex((ms) => ms._id !== msg._id)) {
-          console.log(msg);
           setMessages((state) => [...state, msg]);
         }
       });

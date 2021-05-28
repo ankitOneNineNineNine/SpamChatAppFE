@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
@@ -16,6 +16,7 @@ import MessageDividers from "./messageDivider.component";
 import { Avatar, Chip, Typography } from "@material-ui/core";
 import FaceIcon from "@material-ui/icons/Face";
 import GroupIcon from "@material-ui/icons/Group";
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   infoDrawerChip: {
@@ -50,6 +51,7 @@ export default function LDrawer({ user }) {
     left: false,
     right: false,
   });
+  const currentMsging = useSelector((state) => state.currentMsging.info);
 
   const toggleDrawer = (anchor, open) => (event) => {
     if (
@@ -101,15 +103,7 @@ export default function LDrawer({ user }) {
               />
             ) : (
               <div style={{ width: "250px" }}>
-                <Profile
-                  user={{
-                    fullname: "Aman Mool",
-                    status: "online",
-                    email: "AmanMool@gmail.com",
-                    address: "Bhaktapur, Radhe-Radhe",
-                    username: "AmanMool",
-                  }}
-                />
+                <Profile user={currentMsging} />
                 <MessageDividers />
               </div>
             )}

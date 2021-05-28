@@ -16,6 +16,7 @@ import MailIcon from "@material-ui/icons/Mail";
 import { Typography } from "@material-ui/core";
 import { useDispatch } from "react-redux";
 import { setCurrentMessaging } from "../common/actions";
+import TinyProfile from "./tinyProfile.component";
 
 const useStyles = makeStyles((theme) => ({
   list: {
@@ -65,39 +66,24 @@ export default function FriendsList({ friends, groups, toggleDrawer }) {
             style={{ cursor: "pointer" }}
             onClick={() => {
               dispatch(setCurrentMessaging(friend));
+              toggleDrawer("right", false);
             }}
           >
-            <ListItemAvatar>
-              <Avatar
-                aria-label="recipe"
-                className={classes.avatar}
-                src={
-                  friend.image &&
-                  `http://localhost:8000/profileImge/${friend.image}`
-                }
-              >
-                {friend.image ? null : friend.fullname.charAt(0)}
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={friend.fullname} secondary={friend.status} />
+            <TinyProfile profile={friend} />
           </ListItem>
         ))}
       </List>
       <Divider />
-      <List>
+      <List style={{ cursor: "pointer" }}>
         {groups.map((group, index) => (
           <ListItem
             key={index}
             onClick={() => {
               dispatch(setCurrentMessaging(group));
+              toggleDrawer("right", false);
             }}
           >
-            <ListItemAvatar>
-              <Avatar>
-                <ImageIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={group.name} secondary={group.status} />
+            <TinyProfile profile={group} />
           </ListItem>
         ))}
       </List>

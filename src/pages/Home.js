@@ -105,7 +105,6 @@ function Home() {
     if (!textMsg.length && !images.length) {
       return;
     }
-    console.log(images, textMsg);
     if (images.length) {
       let formData = new FormData();
       formData.append("textMsg", textMsg);
@@ -156,12 +155,23 @@ function Home() {
   let filteredMessages = [];
   if (currentMsging && currentMsging._id) {
     if (messages.length) {
-      filteredMessages = messages.filter(
-        (msg) =>
-          msg.from._id === currentMsging._id ||
-          msg.toInd._id === currentMsging._id ||
-          msg.toGrp?._id === currentMsging._id
-      );
+      filteredMessages = messages.filter((msg) => {
+        if (currentMsging.name) {
+          if (msg.toGrp) {
+            return msg.toGrp._id === currentMsging._id;
+          }
+        } else {
+          if (msg.toInd) {
+            if (
+              msg.toInd._id === currentMsging._id ||
+              (msg.from._id === currentMsging._id && msg.toInd._id === user._id)
+            ) {
+              return true;
+            }
+          }
+        }
+        return false;
+      });
     }
   }
 
@@ -176,7 +186,9 @@ function Home() {
         </Grid>
         <Grid item xs={matches ? 6 : 12}>
           <Typography variant="h6" className={classes.fname}>
-            {currentMsging.fullname}
+            {currentMsging.fullname
+              ? currentMsging.fullname
+              : currentMsging.name}
           </Typography>
           <Divider />
           <List className={classes.messageList} ref={msgRef}>

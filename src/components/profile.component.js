@@ -15,13 +15,14 @@ import GroupAddIcon from "@material-ui/icons/GroupAdd";
 import ShareIcon from "@material-ui/icons/Share";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
-import { CircularProgress, Divider, Tooltip } from "@material-ui/core";
+import { Button, CircularProgress, Divider, Tooltip } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
 import { useSelector } from "react-redux";
 import { SocketContext } from "../contexts/socket.context";
 import CheckIcon from "@material-ui/icons/Check";
 import EmojiPeopleIcon from "@material-ui/icons/EmojiPeople";
 import EditProfile from "./edit-profile.component";
+import GroupIcon from "@material-ui/icons/Group";
 const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 345,
@@ -102,7 +103,7 @@ function Profile({ user, sentNotifs = () => false }) {
             {user.image ? null : user.fullname.charAt(0)}
           </Avatar>
         }
-        title={user.fullname}
+        title={user.fullname ? user.fullname : user.name}
         subheader={user.status}
       />
       <CardMedia
@@ -141,6 +142,13 @@ function Profile({ user, sentNotifs = () => false }) {
               <CheckIcon />
             </IconButton>
           </Tooltip>
+        ) : user.name ? (
+          <Tooltip title="Send Friend Request">
+            <IconButton aria-label="Send Friend Request">
+              <GroupIcon />
+              <Typography variant="subtitle1">Members</Typography>
+            </IconButton>
+          </Tooltip>
         ) : (
           <Tooltip title="Send Friend Request">
             <IconButton aria-label="Send Friend Request" onClick={sendFrReq}>
@@ -156,7 +164,13 @@ function Profile({ user, sentNotifs = () => false }) {
           aria-expanded={expanded}
           aria-label="show more"
         >
-          {user.username !== me.user.username && <ExpandMoreIcon />}
+          {user.username === me.user.username ? null : user.name ? (
+            <Button size="small" color="primary">
+              Edit
+            </Button>
+          ) : (
+            <ExpandMoreIcon />
+          )}
         </IconButton>
       </CardActions>
       {user.username === me.user.username ? (
@@ -167,7 +181,7 @@ function Profile({ user, sentNotifs = () => false }) {
           <Typography paragraph>{user.username}</Typography>
           <Typography paragraph>{user.address}</Typography>
         </CardContent>
-      ) : (
+      ) : user.name ? null : (
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
             <Typography variant="h6">{user.fullname}</Typography>

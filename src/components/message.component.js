@@ -71,16 +71,17 @@ export default function MessageView({ message, user }) {
               aria-label="recipe"
               className={classes.avatar}
               src={
-                user.image && `http://localhost:8000/profileImge/${user.image}`
+                message.from.image &&
+                `http://localhost:8000/profileImge/${message.from.image}`
               }
             >
-              {user.image ? null : user.fullname.charAt(0)}
+              {message.from.image ? null : message.from?.fullname.charAt(0)}
             </Avatar>
           </ListItemAvatar>
           <ListItemText
-            primary={`${message.from.username}, ${moment(
-              message.updatedAt
-            ).format("MMMM Do YYYY, h:mm:ss a")}`}
+            primary={`${
+              message.from.fullname ? message.from.fullname : message.from.name
+            }, ${moment(message.updatedAt).format("MMMM Do YYYY, h:mm:ss a")}`}
             secondary={message.text}
           />
         </div>
@@ -91,14 +92,16 @@ export default function MessageView({ message, user }) {
             className={classes.gridListContainer}
           >
             {message?.images?.map((image, i) => (
-              <GridListTile key={i} className={classes.gridList}>
-                <img
-                  className={classes.imageMessage}
-                  srcSet={"http://localhost:8000/msgImgs" + "/" + image}
-                  alt={image}
-                  loading="lazy"
-                />
-              </GridListTile>
+              <div key={i}>
+                <GridListTile className={classes.gridList}>
+                  <img
+                    className={classes.imageMessage}
+                    srcSet={"http://localhost:8000/msgImgs" + "/" + image}
+                    alt={image}
+                    loading="lazy"
+                  />
+                </GridListTile>
+              </div>
             ))}
           </GridList>
         </div>
