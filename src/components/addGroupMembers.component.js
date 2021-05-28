@@ -13,6 +13,7 @@ import {
 import React from "react";
 import TinyProfile from "./tinyProfile.component";
 import FaceIcon from "@material-ui/icons/Face";
+import { useSelector } from "react-redux";
 const useStyles = makeStyles((theme) => ({
   uploadGrpImage: {
     position: "absolute",
@@ -47,6 +48,7 @@ export default function AddGroupMembers({
   searchFriendsChange,
 }) {
   const classes = useStyles();
+  const me = useSelector((state) => state.user.user);
   return (
     <Modal
       open={addUserBox}
@@ -70,9 +72,15 @@ export default function AddGroupMembers({
                 key={i}
                 icon={<FaceIcon />}
                 label={a.fullname}
-                onDelete={() => {
-                  setUserAdded(userAdded.filter((user) => user._id !== a._id));
-                }}
+                onDelete={
+                  a._id !== me._id
+                    ? () => {
+                        setUserAdded(
+                          userAdded.filter((user) => user._id !== a._id)
+                        );
+                      }
+                    : null
+                }
                 color="secondary"
               />
             ))}

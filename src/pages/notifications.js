@@ -101,10 +101,9 @@ export default function NewNotifs() {
       </Typography>
       {notifications
         .filter((n) => {
-          console.log(me, n);
           return (
-            (n && n.to._id == me._id && !n.accepted) ||
-            (n && n.from._id == me._id && n.accepted)
+            (n.to?._id == me._id && !n.accepted) ||
+            (n.from?._id == me._id && n.accepted)
           );
         })
         .map((notif, i) => {

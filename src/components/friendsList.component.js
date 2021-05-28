@@ -66,7 +66,7 @@ export default function FriendsList({ friends, groups, toggleDrawer }) {
             style={{ cursor: "pointer" }}
             onClick={() => {
               dispatch(setCurrentMessaging(friend));
-              toggleDrawer("right", false);
+              toggleDrawer && toggleDrawer("right", false);
             }}
           >
             <TinyProfile profile={friend} />
@@ -80,7 +80,7 @@ export default function FriendsList({ friends, groups, toggleDrawer }) {
             key={index}
             onClick={() => {
               dispatch(setCurrentMessaging(group));
-              toggleDrawer("right", false);
+              toggleDrawer && toggleDrawer("right", false);
             }}
           >
             <TinyProfile profile={group} />

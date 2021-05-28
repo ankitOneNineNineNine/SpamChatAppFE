@@ -4,10 +4,13 @@ import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import MessageView from "../components/message.component";
 import MessageDividers from "../components/messageDivider.component";
+import GroupAddIcon from "@material-ui/icons/GroupAdd";
 import {
   CircularProgress,
   Divider,
+  Fab,
   List,
+  Tooltip,
   Typography,
   useMediaQuery,
 } from "@material-ui/core";
@@ -64,6 +67,11 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     fontWeight: "bolder",
   },
+  groupCreate: {
+    position: "absolute",
+    bottom: "15%",
+    right: "0",
+  },
 }));
 
 function Home() {
@@ -72,7 +80,7 @@ function Home() {
   const msgRef = useRef(null);
   const user = useSelector((state) => state.user.user);
   const { messages, setMsg } = useContext(MsgContext);
-
+  const [createGroup, setCreateGroup] = useState(false);
   const currentMsging = useSelector((state) => state.currentMsging.info);
   const dispatch = useDispatch();
   const { socket, setSocket } = useContext(SocketContext);
@@ -212,6 +220,25 @@ function Home() {
           />
         </Grid>
       </Grid>
+      <Tooltip title="Create A Group">
+        <Fab
+          color="primary"
+          aria-label="add"
+          className={classes.groupCreate}
+          onClick={() => {
+            setCreateGroup(true);
+          }}
+        >
+          <GroupAddIcon />
+        </Fab>
+      </Tooltip>
+      {createGroup ? (
+        <CreateGroup
+          createGroup={createGroup}
+          setCreateGroup={setCreateGroup}
+          position = 'right'
+        />
+      ) : null}
     </div>
   );
 }

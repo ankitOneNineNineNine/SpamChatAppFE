@@ -73,6 +73,7 @@ export default function CreateGroupCard({
   setCreateGroup,
   changeImage,
   userAdded,
+  groupName,
   setGroupName,
   create,
 }) {
@@ -89,7 +90,9 @@ export default function CreateGroupCard({
       <CardMedia
         className={classes.media}
         image={
-          groupImage
+          typeof groupImage === "string"
+            ? `http://localhost:8000/profileImge/${groupImage}`
+            : groupImage
             ? URL.createObjectURL(groupImage)
             : `${process.env.PUBLIC_URL}/groupImg.png`
         }
@@ -105,8 +108,9 @@ export default function CreateGroupCard({
           />
         </Tooltip>
         <TextField
-        required
+          required
           label="Group Name"
+          defaultValue = {groupName}
           onChange={(e) => {
             setGroupName(e.target.value);
           }}

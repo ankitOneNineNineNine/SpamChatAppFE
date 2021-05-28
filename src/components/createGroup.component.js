@@ -36,9 +36,7 @@ const useStyles = makeStyles((theme) => ({
       margin: theme.spacing(1),
     },
     position: "absolute",
-    bottom: "15%",
     zIndex: 999,
-    right: 0,
     maxWidth: 345,
   },
   grpForm: {
@@ -50,16 +48,27 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     margin: "auto",
   },
+  smallEditCard: {
+    left: "100%",
+    top: "60%",
+    [theme.breakpoints.up("400")]: {
+      left: "40%",
+    },
+  },
 }));
 
-export default function CreateGroup() {
+export default function CreateGroup({
+  createGroup,
+  setCreateGroup,
+  position = "right",
+  group = {},
+}) {
   const classes = useStyles();
-  const [createGroup, setCreateGroup] = useState(false);
   const [addUserBox, setAddUserBox] = useState(false);
-  const [userAdded, setUserAdded] = useState([]);
-  const [groupImage, setGroupImage] = useState(null);
+  const [userAdded, setUserAdded] = useState(group.members || []);
+  const [groupImage, setGroupImage] = useState(group.image || null);
   const [searchText, setSearchText] = useState("");
-  const [groupName, setGroupName] = useState("");
+  const [groupName, setGroupName] = useState(group.name || "");
   const me = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
 
@@ -81,7 +90,7 @@ export default function CreateGroup() {
     let members = userAdded.map((u) => u._id);
 
     let formData = new FormData();
-    console.log(members);
+
     members.forEach((member) => {
       formData.append("members", member);
     });
@@ -101,22 +110,14 @@ export default function CreateGroup() {
       friend.username.toLowerCase().includes(searchText.toLowerCase())
   );
   return (
-    <div className={classes.root}>
-      <Tooltip title="Create A Group">
-        <Fab
-          color="primary"
-          aria-label="add"
-          onClick={() => {
-            setCreateGroup(true);
-          }}
-        >
-          <GroupAddIcon />
-        </Fab>
-      </Tooltip>
-
+    <div
+      className={classes.root + position !== "right" && classes.smallEditCard}
+      style={position === "right" ? { right: "0", bottom: "0" } : null}
+    >
       {createGroup && (
         <div className={classes.grpForm}>
           <CreateGroupCard
+            groupName={groupName}
             groupImage={groupImage}
             setAddUserBox={setAddUserBox}
             setCreateGroup={setCreateGroup}
