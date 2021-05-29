@@ -68,6 +68,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function CreateGroupCard({
+  admins,
+  me,
   groupImage,
   setAddUserBox,
   setCreateGroup,
@@ -76,6 +78,8 @@ export default function CreateGroupCard({
   groupName,
   setGroupName,
   create,
+  edit = false,
+  editGr,
 }) {
   const classes = useStyles();
   const inputRef = useRef(null);
@@ -110,7 +114,8 @@ export default function CreateGroupCard({
         <TextField
           required
           label="Group Name"
-          defaultValue = {groupName}
+          disabled={edit && admins && !admins.includes(me._id)}
+          defaultValue={groupName}
           onChange={(e) => {
             setGroupName(e.target.value);
           }}
@@ -125,7 +130,11 @@ export default function CreateGroupCard({
             setAddUserBox(true);
           }}
         >
-          <AddCircleOutlineIcon />
+          {edit ? (
+            admins && admins.includes(me._id) && <AddCircleOutlineIcon />
+          ) : (
+            <AddCircleOutlineIcon />
+          )}
           Members
         </Button>
         <Typography>{userAdded.length} members</Typography>
@@ -135,9 +144,9 @@ export default function CreateGroupCard({
           size="small"
           color="primary"
           style={{ margin: "auto" }}
-          onClick={create}
+          onClick={edit ? editGr : create}
         >
-          Create
+          {edit ? "Edit " : "Create"}
         </Button>
         <Button
           size="small"

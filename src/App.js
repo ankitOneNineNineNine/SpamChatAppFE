@@ -54,6 +54,9 @@ function App() {
           setNotifs((state) => [...state, notification]);
         }
       });
+      socket.on("newGroupCreated", function (msg) {
+        dispatch(setUser({ token: localStorage.getItem("i_hash") }));
+      });
       socket.on("doneFr", async (msg) => {
         displaySuccess(msg.msg);
         dispatch(setUser({ token: localStorage.getItem("i_hash") }));

@@ -12,10 +12,17 @@ export default function TinyProfile({ profile }) {
             `http://localhost:8000/profileImge/${profile.image}`
           }
         >
-          {profile.image ? null : profile.fullname.charAt(0)}
+          {profile.image
+            ? null
+            : profile.name
+            ? profile.name.charAt(0)
+            : profile.fullname.charAt(0)}
         </Avatar>
       </ListItemAvatar>
-      <ListItemText primary={profile.fullname?profile.fullname: profile.name} secondary={profile.status} />
+      <ListItemText
+        primary={profile.fullname ? profile.fullname : profile.name}
+        secondary={profile.status}
+      />
     </>
   );
 }

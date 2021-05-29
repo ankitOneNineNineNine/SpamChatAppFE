@@ -40,6 +40,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function AddGroupMembers({
+  admins,
+  me,
+  edit = false,
   addUserBox,
   setAddUserBox,
   myFriends,
@@ -48,7 +51,6 @@ export default function AddGroupMembers({
   searchFriendsChange,
 }) {
   const classes = useStyles();
-  const me = useSelector((state) => state.user.user);
   return (
     <Modal
       open={addUserBox}
@@ -59,12 +61,24 @@ export default function AddGroupMembers({
       <div>
         <Card className={classes.addPeopleBox}>
           <CardContent>
-            <TextField
-              id="standard-basic"
-              label="Search Friends"
-              style={{ width: "100%" }}
-              onChange={searchFriendsChange}
-            />
+            {edit ? (
+              admins &&
+              admins.includes(me._id) && (
+                <TextField
+                  id="standard-basic"
+                  label="Search Friends"
+                  style={{ width: "100%" }}
+                  onChange={searchFriendsChange}
+                />
+              )
+            ) : (
+              <TextField
+                id="standard-basic"
+                label="Search Friends"
+                style={{ width: "100%" }}
+                onChange={searchFriendsChange}
+              />
+            )}
           </CardContent>
           <CardContent className={classes.listAdded}>
             {userAdded.map((a, i) => (
@@ -74,37 +88,71 @@ export default function AddGroupMembers({
                 label={a.fullname}
                 onDelete={
                   a._id !== me._id
-                    ? () => {
-                        setUserAdded(
-                          userAdded.filter((user) => user._id !== a._id)
-                        );
-                      }
+                    ? edit
+                      ? admins.includes(me._id)
+                        ? () => {
+                            setUserAdded(
+                              userAdded.filter((user) => user._id !== a._id)
+                            );
+                          }
+                        : null
+                      : () => {
+                          setUserAdded(
+                            userAdded.filter((user) => user._id !== a._id)
+                          );
+                        }
                     : null
                 }
                 color="secondary"
               />
             ))}
           </CardContent>
-          <List className={classes.listSearched}>
-            {myFriends.map((friend) => {
-              return (
-                <ListItem style={{ cursor: "pointer" }} key={friend._id}>
-                  <TinyProfile profile={friend} />
-                  {userAdded.findIndex((u) => u._id === friend._id) < 0 ? (
-                    <Button
-                      size="small"
-                      color="primary"
-                      onClick={() => {
-                        setUserAdded([...userAdded, friend]);
-                      }}
-                    >
-                      Add
-                    </Button>
-                  ) : null}
-                </ListItem>
-              );
-            })}
-          </List>
+          {edit ? (
+            admins &&
+            admins.includes(me._id) && (
+              <List className={classes.listSearched}>
+                {myFriends.map((friend) => {
+                  return (
+                    <ListItem style={{ cursor: "pointer" }} key={friend._id}>
+                      <TinyProfile profile={friend} />
+                      {userAdded.findIndex((u) => u._id === friend._id) < 0 ? (
+                        <Button
+                          size="small"
+                          color="primary"
+                          onClick={() => {
+                            setUserAdded([...userAdded, friend]);
+                          }}
+                        >
+                          Add
+                        </Button>
+                      ) : null}
+                    </ListItem>
+                  );
+                })}
+              </List>
+            )
+          ) : (
+            <List className={classes.listSearched}>
+              {myFriends.map((friend) => {
+                return (
+                  <ListItem style={{ cursor: "pointer" }} key={friend._id}>
+                    <TinyProfile profile={friend} />
+                    {userAdded.findIndex((u) => u._id === friend._id) < 0 ? (
+                      <Button
+                        size="small"
+                        color="primary"
+                        onClick={() => {
+                          setUserAdded([...userAdded, friend]);
+                        }}
+                      >
+                        Add
+                      </Button>
+                    ) : null}
+                  </ListItem>
+                );
+              })}
+            </List>
+          )}
 
           <Button
             size="small"

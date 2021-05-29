@@ -55,7 +55,7 @@ function Profile({ user, sentNotifs = () => false }) {
   const { socket } = useContext(SocketContext);
   const [sent, setSent] = useState(false);
   const [edit, setEdit] = useState(false);
-  const [info, setInfo] = useState(true);
+  const [info, setInfo] = useState(false);
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
@@ -87,9 +87,8 @@ function Profile({ user, sentNotifs = () => false }) {
         <CreateGroup
           createGroup={info}
           setCreateGroup={setInfo}
-          position="left"
+          edit={true}
           group={user}
-          
         />
       ) : null}
       <Card
@@ -113,7 +112,11 @@ function Profile({ user, sentNotifs = () => false }) {
                 user.image && `http://localhost:8000/profileImge/${user.image}`
               }
             >
-              {user.image ? null : user.fullname.charAt(0)}
+              {user.image
+                ? null
+                : user.name
+                ? user.name.charAt(0)
+                : user.fullname.charAt(0)}
             </Avatar>
           }
           title={user.fullname ? user.fullname : user.name}

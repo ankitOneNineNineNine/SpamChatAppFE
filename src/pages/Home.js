@@ -236,7 +236,6 @@ function Home() {
         <CreateGroup
           createGroup={createGroup}
           setCreateGroup={setCreateGroup}
-          position = 'right'
         />
       ) : null}
     </div>
