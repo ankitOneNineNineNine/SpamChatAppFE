@@ -101,7 +101,6 @@ const useStyles = makeStyles((theme) => ({
     width: 60,
     height: 60,
   },
-
 }));
 
 function Navbar({ history }) {
@@ -117,6 +116,7 @@ function Navbar({ history }) {
   const [msgOpen, setMsgOpen] = useState(false);
   const { socket, setSocket } = useContext(SocketContext);
   const { notifications } = useContext(NotifContext);
+
   const dispatch = useDispatch();
   const search = (e) => {
     if (e.key === "Enter") {
@@ -176,7 +176,7 @@ function Navbar({ history }) {
             className={classes.crossModal}
             onClick={handleProfileClose}
           >
-            <CancelIcon style = {{fontSize: '40px'}} />
+            <CancelIcon style={{ fontSize: "40px" }} />
           </IconButton>
           <Profile user={user} />
         </div>
@@ -215,8 +215,18 @@ function Navbar({ history }) {
           history.push("/notifications");
         }}
       >
-        <IconButton aria-label="show 11 new notifications" color="inherit">
-          <Badge badgeContent={notifications.length} color="secondary">
+        <IconButton aria-label="show new notifications" color="inherit">
+          <Badge
+            badgeContent={
+              notifications.filter((n) => {
+                return (
+                  (n.to?._id == user._id && !n.accepted) ||
+                  (n.from?._id == user._id && n.accepted)
+                );
+              }).length
+            }
+            color="secondary"
+          >
             <NotificationsIcon />
           </Badge>
         </IconButton>
@@ -312,7 +322,17 @@ function Navbar({ history }) {
                     setNotifsOpen(!notifsOpen);
                   }}
                 >
-                  <Badge badgeContent={notifications.length} color="secondary">
+                  <Badge
+                    badgeContent={
+                      notifications.filter((n) => {
+                        return (
+                          (n.to?._id == user._id && !n.accepted) ||
+                          (n.from?._id == user._id && n.accepted)
+                        );
+                      }).length
+                    }
+                    color="secondary"
+                  >
                     <NotificationsIcon />
                   </Badge>
                 </IconButton>
