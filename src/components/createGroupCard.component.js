@@ -100,17 +100,30 @@ export default function CreateGroupCard({
             ? URL.createObjectURL(groupImage)
             : `${process.env.PUBLIC_URL}/groupImg.png`
         }
-        title=""
+        title="profile image"
       />
       <CardContent>
-        <Tooltip title="Upload Group Image">
-          <PublishIcon
-            className={classes.uploadGrpImage}
-            onClick={() => {
-              inputRef.current.click();
-            }}
-          />
-        </Tooltip>
+        {edit ? (
+          admins && admins.includes(me._id) ? (
+            <Tooltip title="Upload Group Image">
+              <PublishIcon
+                className={classes.uploadGrpImage}
+                onClick={() => {
+                  inputRef.current.click();
+                }}
+              />
+            </Tooltip>
+          ) : null
+        ) : (
+          <Tooltip title="Upload Group Image">
+            <PublishIcon
+              className={classes.uploadGrpImage}
+              onClick={() => {
+                inputRef.current.click();
+              }}
+            />
+          </Tooltip>
+        )}
         <TextField
           required
           label="Group Name"

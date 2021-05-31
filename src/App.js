@@ -45,6 +45,7 @@ function App() {
   useEffect(() => {
     if (socket) {
       socket.on("msgR", function (msg) {
+        console.log(msg);
         if (messages.findIndex((ms) => ms._id !== msg._id)) {
           setMessages((state) => [...state, msg]);
         }

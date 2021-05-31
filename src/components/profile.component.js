@@ -134,13 +134,13 @@ function Profile({ user, sentNotifs = () => false }) {
         />
         <CardActions disableSpacing>
           {user.username === me.user.username ? (
-            <Tooltip
-              title="Edit"
-              onClick={() => {
-                setEdit(true);
-              }}
-            >
-              <IconButton aria-label="Edit">
+            <Tooltip title="Edit">
+              <IconButton
+                aria-label="Edit"
+                onClick={() => {
+                  setEdit(true);
+                }}
+              >
                 <EditIcon />
                 <Typography variant="caption" style={{ fontWeight: "bolder" }}>
                   Edit

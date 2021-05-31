@@ -77,7 +77,7 @@ export default function CreateGroup({
   const [groupImage, setGroupImage] = useState(group.image || null);
   const [searchText, setSearchText] = useState("");
   const [groupName, setGroupName] = useState(group.name || "");
-  const {socket} = useContext(SocketContext)
+  const { socket } = useContext(SocketContext);
   const me = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
 
@@ -99,6 +99,7 @@ export default function CreateGroup({
     formData.append("name", groupName);
     PUT(`/group/${group._id}`, formData, true, "multipart/form-data")
       .then((data) => {
+        setCreateGroup(false);
         dispatch(setUser({ token: localStorage.getItem("i_hash") }));
       })
       .catch((err) => {
@@ -135,9 +136,9 @@ export default function CreateGroup({
       .then((data) => {
         dispatch(setUser({ token: localStorage.getItem("i_hash") }));
         displaySuccess("Group Created");
-        socket.emit('newGroup', {
+        socket.emit("newGroup", {
           members,
-        })
+        });
         setCreateGroup(false);
       })
       .catch((err) => {
