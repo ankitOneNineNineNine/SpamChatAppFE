@@ -1,0 +1,1 @@
+export const BEURL = 'https://boomchat1999.herokuapp.com/'

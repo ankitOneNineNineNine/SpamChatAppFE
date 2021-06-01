@@ -1,7 +1,8 @@
 import axios from "axios";
+import { BEURL } from "../config";
 
 const http = axios.create({
-  baseURL: "http://localhost:8000/appv1",
+  baseURL: BEURL+"/appv1",
 });
 
 export const GET = (url, secured = false) => {

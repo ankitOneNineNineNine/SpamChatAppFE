@@ -25,6 +25,7 @@ import EditProfile from "./edit-profile.component";
 import GroupIcon from "@material-ui/icons/Group";
 import AddGroupMembers from "./addGroupMembers.component";
 import CreateGroup from "./createGroup.component";
+import { BEURL } from "../config";
 const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 345,
@@ -109,7 +110,7 @@ function Profile({ user, sentNotifs = () => false }) {
               aria-label="recipe"
               className={classes.avatar}
               src={
-                user.image && `http://localhost:8000/profileImge/${user.image}`
+                user.image && `${BEURL}/profileImge/${user.image}`
               }
             >
               {user.image
@@ -127,7 +128,7 @@ function Profile({ user, sentNotifs = () => false }) {
           className={classes.media}
           image={
             user.image
-              ? `http://localhost:8000/profileImge/${user.image}`
+              ? `${BEURL}/profileImge/${user.image}`
               : `${process.env.PUBLIC_URL}/userimage.jpg`
           }
           title="Profile Picture"

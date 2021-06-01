@@ -32,6 +32,7 @@ import CancelIcon from "@material-ui/icons/Cancel";
 import { PUT } from "../adapters/http.adapter";
 import { setUser } from "../common/actions";
 import { displaySuccess } from "../common/toaster";
+import { BEURL } from "../config";
 const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 345,
@@ -143,7 +144,7 @@ export default function EditProfile({ setEdit }) {
             aria-label="recipe"
             className={classes.avatar}
             src={
-              user.image && `http://localhost:8000/profileImge/${user.image}`
+              user.image && `${BEURL}/profileImge/${user.image}`
             }
           >
             {user.image ? null : user.fullname.charAt(0)}
@@ -158,7 +159,7 @@ export default function EditProfile({ setEdit }) {
           credentials.image
             ? URL.createObjectURL(credentials.image)
             : user.image
-            ? `http://localhost:8000/profileImge/${user.image}`
+            ? `${BEURL}/profileImge/${user.image}`
             : `${process.env.PUBLIC_URL}/userimage.jpg`
         }
         title="Profile Picture"

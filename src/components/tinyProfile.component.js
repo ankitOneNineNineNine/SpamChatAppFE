@@ -1,5 +1,6 @@
 import { Avatar, ListItemAvatar, ListItemText } from "@material-ui/core";
 import React from "react";
+import { BEURL } from "../config";
 
 export default function TinyProfile({ profile }) {
   return (
@@ -9,7 +10,7 @@ export default function TinyProfile({ profile }) {
           aria-label="recipe"
           src={
             profile.image &&
-            `http://localhost:8000/profileImge/${profile.image}`
+            `${BEURL}/profileImge/${profile.image}`
           }
         >
           {profile.image

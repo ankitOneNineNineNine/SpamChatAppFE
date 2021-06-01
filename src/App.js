@@ -11,6 +11,7 @@ import { SocketContextProvider } from "./contexts/socket.context";
 import { NotifContextProvider } from "./contexts/notification.context";
 import { GET, PUT, REMOVE } from "./adapters/http.adapter";
 import { displaySuccess } from "./common/toaster";
+import { BEURL } from "./config";
 function App() {
   const dispatch = useDispatch();
   const [socket, setSocket] = useState(null);
@@ -23,7 +24,7 @@ function App() {
       dispatch(setUser({ token: hash }));
     }
     if (hash) {
-      let s = io("http://localhost:8000", {
+      let s = io(BEURL, {
         auth: {
           token: localStorage.getItem("i_hash"),
         },

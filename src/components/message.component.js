@@ -17,6 +17,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import moment from "moment";
+import { BEURL } from "../config";
 
 const useStyles = makeStyles((theme) => ({
   sent: {
@@ -72,7 +73,7 @@ export default function MessageView({ message, user }) {
               className={classes.avatar}
               src={
                 message.from.image &&
-                `http://localhost:8000/profileImge/${message.from.image}`
+                `${BEURL}/profileImge/${message.from.image}`
               }
             >
               {message.from.image ? null : message.from?.fullname.charAt(0)}
@@ -96,7 +97,7 @@ export default function MessageView({ message, user }) {
                 <GridListTile className={classes.gridList}>
                   <img
                     className={classes.imageMessage}
-                    srcSet={"http://localhost:8000/msgImgs" + "/" + image}
+                    srcSet={BEURL+"/msgImgs" + "/" + image}
                     alt={image}
                     loading="lazy"
                   />

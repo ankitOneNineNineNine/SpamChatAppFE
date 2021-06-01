@@ -25,6 +25,7 @@ import TinyProfile from "./tinyProfile.component";
 import { useSelector } from "react-redux";
 
 import AddGroupMembers from "./addGroupMembers.component";
+import { BEURL } from "../config";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -95,7 +96,7 @@ export default function CreateGroupCard({
         className={classes.media}
         image={
           typeof groupImage === "string"
-            ? `http://localhost:8000/profileImge/${groupImage}`
+            ? `${BEURL}/profileImge/${groupImage}`
             : groupImage
             ? URL.createObjectURL(groupImage)
             : `${process.env.PUBLIC_URL}/groupImg.png`
