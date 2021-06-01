@@ -66,6 +66,7 @@ export default function FriendsList({ friends, groups, toggleDrawer }) {
             style={{ cursor: "pointer" }}
             onClick={() => {
               dispatch(setCurrentMessaging(friend));
+              localStorage.setItem("currentMsging", JSON.stringify(friend));
               toggleDrawer && toggleDrawer("right", false);
             }}
           >
@@ -80,6 +81,7 @@ export default function FriendsList({ friends, groups, toggleDrawer }) {
             key={index}
             onClick={() => {
               dispatch(setCurrentMessaging(group));
+              localStorage.setItem("currentMsging", JSON.stringify(group));
               toggleDrawer && toggleDrawer("right", false);
             }}
           >

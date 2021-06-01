@@ -86,7 +86,10 @@ function Home() {
   const { socket, setSocket } = useContext(SocketContext);
 
   useEffect(() => {
-    if (user) {
+    let currentMsgingLocal = JSON.parse(localStorage.getItem("currentMsging"));
+    if (currentMsgingLocal) {
+      dispatch(setCurrentMessaging(currentMsgingLocal));
+    } else if (user) {
       dispatch(setCurrentMessaging(user.friends[0]));
     }
   }, [user]);
