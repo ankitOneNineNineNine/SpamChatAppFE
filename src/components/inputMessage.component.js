@@ -55,6 +55,12 @@ export default function InputMessage({
   const classes = useStyles();
   const inputImageRef = useRef(null);
 
+  const keySend = (evt) => {
+    if (evt.keyCode == 13 && !evt.shiftKey) {
+      messageSend();
+    }
+  };
+
   const imgS = (e) => {
     inputImageRef.current.click();
   };
@@ -92,6 +98,7 @@ export default function InputMessage({
         rowsMax={3}
         id="standard-full-width"
         label="Enter your Message Here"
+        onKeyDown={keySend}
         style={{ margin: 8 }}
         fullWidth
         margin="normal"
