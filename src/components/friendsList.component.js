@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
@@ -17,6 +17,8 @@ import { Typography } from "@material-ui/core";
 import { useDispatch } from "react-redux";
 import { setCurrentMessaging } from "../common/actions";
 import TinyProfile from "./tinyProfile.component";
+import { MsgContext } from "../contexts/message.context";
+import { PUT } from "../adapters/http.adapter";
 
 const useStyles = makeStyles((theme) => ({
   list: {
@@ -66,6 +68,7 @@ export default function FriendsList({ friends, groups, toggleDrawer }) {
             style={{ cursor: "pointer" }}
             onClick={() => {
               dispatch(setCurrentMessaging(friend));
+
               localStorage.setItem("currentMsging", JSON.stringify(friend));
               toggleDrawer && toggleDrawer("right", false);
             }}
@@ -81,6 +84,7 @@ export default function FriendsList({ friends, groups, toggleDrawer }) {
             key={index}
             onClick={() => {
               dispatch(setCurrentMessaging(group));
+
               localStorage.setItem("currentMsging", JSON.stringify(group));
               toggleDrawer && toggleDrawer("right", false);
             }}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import Portal from "@material-ui/core/Portal";
@@ -11,6 +11,11 @@ import {
   ListItemText,
   Typography,
 } from "@material-ui/core";
+import MessageView from "../components/message.component";
+import { PUT } from "../adapters/http.adapter";
+import { MsgContext } from "../contexts/message.context";
+import { useDispatch, useSelector } from "react-redux";
+import { setCurrentMessaging } from "../common/actions";
 
 const useStyles = makeStyles((theme) => ({
   dropdown: {
@@ -19,14 +24,14 @@ const useStyles = makeStyles((theme) => ({
     width: "400px",
     margin: "auto",
     position: "fixed",
-    right: '0px',
-    borderRadius: '2px',
-    border: '1px solid blue',
+    right: "0px",
+    borderRadius: "2px",
+    border: "1px solid blue",
     top: "45px",
     backgroundColor: "white",
     [theme.breakpoints.down("850")]: {
-      left: '50%',
-      transform: 'translateX(-50%)'
+      left: "50%",
+      transform: "translateX(-50%)",
     },
   },
   msgLst: {
@@ -36,8 +41,46 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function NewMessage() {
+export default function NewMessage({ history }) {
   const classes = useStyles();
+  const { messages, setMsg } = useContext(MsgContext);
+  const user = useSelector((state) => state.user.user);
+  const dispatch = useDispatch();
+  const sentmid = (message) => {
+    seenMessage(message.from);
+    dispatch(setCurrentMessaging(message.from));
+    localStorage.setItem("currentMsging", JSON.stringify(message.from));
+    history.push("/");
+  };
+
+  const seenMessage = (from) => {
+    let msg = messages;
+
+    let UnseenMsgFrom = msg.filter((m) => m.from._id === from._id && !m.seen);
+    console.log(from, UnseenMsgFrom);
+    UnseenMsgFrom.forEach(async (msgs) => {
+      let i = messages.findIndex((m) => m._id === msgs._id);
+      msg[i]["seen"] = true;
+      setMsg([...msg]);
+      let done = await PUT(`/messages/${msgs._id}`, { seen: true }, true);
+    });
+  };
+
+  let notSeenMsgs = messages.filter(
+    (m) => !m.seen && m?.from?._id !== user._id
+  );
+  let notificationMessages = [];
+  notSeenMsgs.forEach((msg) => {
+    let i = notificationMessages.findIndex(
+      (ib) => ib.from?._id === msg.from?._id
+    );
+    if (i > -1) {
+      notificationMessages[i] = msg;
+    } else {
+      notificationMessages.push(msg);
+    }
+  });
+  console.log(notSeenMsgs, notificationMessages);
 
   return (
     <div className={classes.dropdown}>
@@ -45,25 +88,19 @@ export default function NewMessage() {
         New Messages
       </Typography>
       <Divider />
-      <List className={classes.msgLst}>
-        <ListItem>
-          <ListItemAvatar>
-            <Avatar>A</Avatar>
-          </ListItemAvatar>
-          <ListItemText
-            primary="Photos, Jan 9, 2014"
-            secondary="Hello Guyz kasto cha ta?"
-          />
-        </ListItem>
-        <ListItem>
-          <ListItemAvatar>
-            <Avatar>A</Avatar>
-          </ListItemAvatar>
-          <ListItemText
-            primary="Photos, Jan 9, 2014"
-            secondary="Hello Guyz kasto cha ta?"
-          />
-        </ListItem>
+      <List className={classes.messageList}>
+        {notificationMessages.map((message, i) => {
+          return (
+            <div
+              key={i}
+              onClick={() => {
+                sentmid(message);
+              }}
+            >
+              <MessageView msgNots={true} message={message} user={user} />
+            </div>
+          );
+        })}
       </List>
     </div>
   );

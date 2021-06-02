@@ -28,6 +28,7 @@ import { searchPeople } from "../common/actions";
 import { SocketContext } from "../contexts/socket.context";
 import { NotifContext } from "../contexts/notification.context";
 import CancelIcon from "@material-ui/icons/Cancel";
+import { MsgContext } from "../contexts/message.context";
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
@@ -116,6 +117,7 @@ function Navbar({ history }) {
   const [msgOpen, setMsgOpen] = useState(false);
   const { socket, setSocket } = useContext(SocketContext);
   const { notifications } = useContext(NotifContext);
+  const { messages } = useContext(MsgContext);
 
   const dispatch = useDispatch();
   const search = (e) => {
@@ -171,7 +173,7 @@ function Navbar({ history }) {
       <Modal open={profileModalOpen} onClose={handleProfileClose}>
         <div>
           <IconButton
-            iconStyle={classes.crossModal}
+            iconstyle={classes.crossModal}
             aria-label="Cross"
             className={classes.crossModal}
             onClick={handleProfileClose}
@@ -203,8 +205,14 @@ function Navbar({ history }) {
           history.push("/message");
         }}
       >
-        <IconButton aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="secondary">
+        <IconButton aria-label="show new mails" color="inherit">
+          <Badge
+            badgeContent={
+              messages.filter((m) => !m.seen && m?.from?._id !== user?._id)
+                .length
+            }
+            color="secondary"
+          >
             <MailIcon />
           </Badge>
         </IconButton>
@@ -310,7 +318,15 @@ function Navbar({ history }) {
                     setNotifsOpen(false);
                   }}
                 >
-                  <Badge badgeContent={10} color="secondary">
+           
+                  <Badge
+                    badgeContent={
+                      messages.filter(
+                        (m) => !m.seen && m?.from?._id !== user._id
+                      ).length
+                    }
+                    color="secondary"
+                  >
                     <MailIcon />
                   </Badge>
                 </IconButton>
@@ -364,7 +380,7 @@ function Navbar({ history }) {
           {renderMenu}
           {msgOpen ? (
             <div>
-              <NewMessage />
+              <NewMessage history={history} />
             </div>
           ) : null}
           {notifsOpen ? <NewNotifs /> : null}

@@ -27,8 +27,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#7272f4",
     margin: "5px",
     display: "block",
+    cursor: "pointer",
   },
   received: {
+    cursor: "pointer",
     backgroundColor: "#a2a2d9",
     borderRadius: "10px",
     margin: "5x",
@@ -58,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
   headingFlex: { display: "flex", padding: "5px", alignItems: "center" },
 }));
 
-export default function MessageView({ message, user }) {
+export default function MessageView({ message, user, msgNots = false }) {
   const classes = useStyles();
 
   return (
@@ -82,28 +84,35 @@ export default function MessageView({ message, user }) {
             primary={`${
               message.from.fullname ? message.from.fullname : message.from.name
             }, ${moment(message.createdAt).format("MMMM Do YYYY, h:mm:ss a")}`}
-            secondary={message.text}
+            secondary={
+              (msgNots ? (message?.images?.length ? "FILE MESSAGE" : "") : "") +
+              message.text
+            }
           />
         </div>
-        <div>
-          <GridList
-            cellHeight={150}
-            cols={2}
-            className={classes.gridListContainer}
-          >
-            {message?.images?.map((image, i) => (
-              <div key={i}>
-                <GridListTile className={classes.gridList}>
-                  <img
-                    className={classes.imageMessage}
-                    src={image}
-                    loading = 'lazy'
-                  />
-                </GridListTile>
-              </div>
-            ))}
-          </GridList>
-        </div>
+        {!msgNots ? (
+          message.images?.length ? (
+            <div>
+              <GridList
+                cellHeight={150}
+                cols={2}
+                className={classes.gridListContainer}
+              >
+                {message.images.map((image, i) => (
+                  <div key={i}>
+                    <GridListTile className={classes.gridList}>
+                      <img
+                        className={classes.imageMessage}
+                        src={image}
+                        loading="lazy"
+                      />
+                    </GridListTile>
+                  </div>
+                ))}
+              </GridList>
+            </div>
+          ) : null
+        ) : null}
       </ListItem>
     </div>
   );

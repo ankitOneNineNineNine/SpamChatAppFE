@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import AppRouter from "./Routing/app.routing";
 import "./styles/scrollBar.css";
 import { ToastContainer } from "react-toastify";
@@ -12,12 +12,42 @@ import { NotifContextProvider } from "./contexts/notification.context";
 import { GET, PUT, REMOVE } from "./adapters/http.adapter";
 import { displaySuccess } from "./common/toaster";
 import { BEURL } from "./config";
+import { ChangeHistory } from "@material-ui/icons";
 function App() {
   const dispatch = useDispatch();
   const [socket, setSocket] = useState(null);
   const [messages, setMessages] = useState([]);
   const [notifs, setNotifs] = useState([]);
   const user = useSelector((state) => state.user.user);
+  const currentMsging = useSelector((state) => state.currentMsging.info);
+  const [msgRing, setMsgRing] = useState(null);
+  useEffect(() => {
+    let ring = new Audio(process.env.PUBLIC_URL + "/newMsg.mp3");
+    setMsgRing(ring);
+  }, []);
+  const seenMessage = () => {
+    let msg = messages;
+
+    let filterMsg = messages.filter(
+      (m) => m.from?._id === currentMsging?._id && !m.seen
+    );
+
+    filterMsg.forEach(async (ms) => {
+      let i = msg.findIndex((m) => m._id === ms._id);
+      msg[i]["seen"] = true;
+      setMessages([...msg]);
+      let done = await PUT(`/messages/${ms._id}`, { seen: true }, true);
+    });
+  };
+
+  useEffect(() => {
+    seenMessage();
+  }, [currentMsging?._id]);
+
+  useEffect(() => {
+    seenMessage();
+  }, [messages]);
+
   useEffect(() => {
     let hash = localStorage.getItem("i_hash");
     if (hash) {
@@ -46,8 +76,13 @@ function App() {
   useEffect(() => {
     if (socket) {
       socket.on("msgR", function (msg) {
-        console.log(msg);
         if (messages.findIndex((ms) => ms._id !== msg._id)) {
+          if (msg.from._id !== user?._id) {
+            msgRing
+              .play()
+              .then((_) => {})
+              .catch((_) => {});
+          }
           setMessages((state) => [...state, msg]);
         }
       });
