@@ -96,7 +96,7 @@ export default function CreateGroupCard({
         className={classes.media}
         image={
           typeof groupImage === "string"
-            ? `${BEURL}/profileImge/${groupImage}`
+            ? groupImage
             : groupImage
             ? URL.createObjectURL(groupImage)
             : `${process.env.PUBLIC_URL}/groupImg.png`

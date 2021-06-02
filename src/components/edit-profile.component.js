@@ -144,7 +144,7 @@ export default function EditProfile({ setEdit }) {
             aria-label="recipe"
             className={classes.avatar}
             src={
-              user.image && `${BEURL}/profileImge/${user.image}`
+              user.image && `${user.image}`
             }
           >
             {user.image ? null : user.fullname.charAt(0)}
@@ -159,7 +159,7 @@ export default function EditProfile({ setEdit }) {
           credentials.image
             ? URL.createObjectURL(credentials.image)
             : user.image
-            ? `${BEURL}/profileImge/${user.image}`
+            ? `${user.image}`
             : `${process.env.PUBLIC_URL}/userimage.jpg`
         }
         title="Profile Picture"

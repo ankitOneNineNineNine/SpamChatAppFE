@@ -10,7 +10,7 @@ export default function TinyProfile({ profile }) {
           aria-label="recipe"
           src={
             profile.image &&
-            `${BEURL}/profileImge/${profile.image}`
+            `profileImge/${profile.image}`
           }
         >
           {profile.image

@@ -98,7 +98,7 @@ function Home() {
       let ht = msgRef.current.scrollHeight;
       msgRef.current.scrollTo({ top: ht });
     }
-  }, [msgRef, messages]);
+  }, [msgRef, messages, currentMsging]);
 
   const [textMsg, setTextMsg] = useState("");
   const [images, setImages] = useState([]);

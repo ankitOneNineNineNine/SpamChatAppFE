@@ -36,19 +36,21 @@ const useStyles = makeStyles((theme) => ({
   },
   gridListContainer: {
     flexDirection: "row",
+    height: "300px",
     padding: 0,
     overflow: "hidden",
+    height: "auto",
   },
   gridList: {
     padding: 0,
     position: "relative",
     top: "40px",
-    width: "300px",
-    height: "300px",
+    width: "200px",
+    height: "200px",
   },
   imageMessage: {
-    width: "auto",
-    height: "100%",
+    width: "200px",
+    height: "200px",
     float: "revert",
     cursor: "pointer",
     clear: "both",
@@ -71,10 +73,7 @@ export default function MessageView({ message, user }) {
             <Avatar
               aria-label="recipe"
               className={classes.avatar}
-              src={
-                message.from.image &&
-                `${BEURL}/profileImge/${message.from.image}`
-              }
+              src={message.from.image && `${message.from.image}`}
             >
               {message.from.image ? null : message.from?.fullname.charAt(0)}
             </Avatar>
@@ -82,7 +81,7 @@ export default function MessageView({ message, user }) {
           <ListItemText
             primary={`${
               message.from.fullname ? message.from.fullname : message.from.name
-            }, ${moment(message.updatedAt).format("MMMM Do YYYY, h:mm:ss a")}`}
+            }, ${moment(message.createdAt).format("MMMM Do YYYY, h:mm:ss a")}`}
             secondary={message.text}
           />
         </div>
@@ -97,9 +96,8 @@ export default function MessageView({ message, user }) {
                 <GridListTile className={classes.gridList}>
                   <img
                     className={classes.imageMessage}
-                    srcSet={BEURL+"/msgImgs" + "/" + image}
-                    alt={image}
-                    loading="lazy"
+                    src={image}
+                    loading = 'lazy'
                   />
                 </GridListTile>
               </div>
