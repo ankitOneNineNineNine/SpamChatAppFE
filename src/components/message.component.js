@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
   gridListContainer: {
     flexDirection: "row",
-    height: "300px",
+    flexShrink: "2",
     padding: 0,
     overflow: "hidden",
     height: "auto",
@@ -46,18 +46,20 @@ const useStyles = makeStyles((theme) => ({
   gridList: {
     padding: 0,
     position: "relative",
-    top: "40px",
-    width: "200px",
-    height: "200px",
   },
   imageMessage: {
-    width: "200px",
-    height: "200px",
+    width: "100%",
+    height: "auto",
+    position: "relative",
     float: "revert",
     cursor: "pointer",
     clear: "both",
   },
   headingFlex: { display: "flex", padding: "5px", alignItems: "center" },
+  imageContainer: {
+    overflow: "hidden",
+    flex: '.2'
+  },
 }));
 
 export default function MessageView({ message, user, msgNots = false }) {
@@ -99,7 +101,7 @@ export default function MessageView({ message, user, msgNots = false }) {
                 className={classes.gridListContainer}
               >
                 {message.images.map((image, i) => (
-                  <div key={i}>
+                  <div key={i} className={classes.imageContainer}>
                     <GridListTile className={classes.gridList}>
                       <img
                         className={classes.imageMessage}
