@@ -16,12 +16,11 @@ const useStyles = makeStyles((theme) => ({
 export default function People() {
   const classes = useStyles();
   const people = useSelector((state) => state.people.people);
-  const {notifications} = useContext(NotifContext);
-  
-  const sentNotifs = (u) => {
+  const { notifications } = useContext(NotifContext);
 
+  const sentNotifs = (u) => {
     let ind = notifications.findIndex((n) => n.to._id === u._id);
-    console.log(u, ind)
+    console.log(u, ind);
     if (ind < 0) {
       return false;
     }
@@ -41,7 +40,7 @@ export default function People() {
       <Box display="flex" flexDirection="row" p={2} m={1}>
         {people.map((p, i) => (
           <Box p={1} m={2} key={p._id}>
-            <Profile user={p} sentNotifs = {sentNotifs} />
+            <Profile user={p} sentNotifs={sentNotifs} />
           </Box>
         ))}
       </Box>

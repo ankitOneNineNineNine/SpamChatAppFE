@@ -47,9 +47,13 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     backgroundColor: red[500],
   },
+  noMP: {
+    margin: 0,
+    padding: 0,
+  },
 }));
 
-function Profile({ user, sentNotifs = () => false }) {
+function Profile({ mainProfile = false, user, sentNotifs = () => false }) {
   const classes = useStyles();
   const me = useSelector((state) => state.user);
   const [expanded, setExpanded] = React.useState(false);
@@ -92,10 +96,11 @@ function Profile({ user, sentNotifs = () => false }) {
           group={user}
         />
       ) : null}
+
       <Card
         className={classes.root}
         style={
-          user.username === me.user.username
+          user.username === me.user.username && mainProfile
             ? {
                 display: "block",
                 margin: "auto",
@@ -109,9 +114,7 @@ function Profile({ user, sentNotifs = () => false }) {
             <Avatar
               aria-label="recipe"
               className={classes.avatar}
-              src={
-                user.image && `${user.image}`
-              }
+              src={user.image && `${user.image}`}
             >
               {user.image
                 ? null
