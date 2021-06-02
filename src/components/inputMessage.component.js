@@ -57,7 +57,9 @@ export default function InputMessage({
 
   const keySend = (evt) => {
     if (evt.keyCode == 13 && !evt.shiftKey) {
-      messageSend();
+      if (textMsg.length) {
+        messageSend();
+      }
     }
   };
 
@@ -71,7 +73,6 @@ export default function InputMessage({
         ref={inputImageRef}
         onChange={imageSelect}
         className={classes.noDisp}
-        accept=".jpg, .jpeg, .png"
         multiple
       />
       <div className={classes.imageSelectedDisplay}>
@@ -95,7 +96,7 @@ export default function InputMessage({
       <TextField
         multiline
         onChange={(e) => messageChange(e.target.value)}
-        rowsMax={3}
+        rowsMax={2}
         id="standard-full-width"
         label="Enter your Message Here"
         onKeyDown={keySend}
