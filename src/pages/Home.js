@@ -80,10 +80,10 @@ function Home() {
   const msgRef = useRef(null);
   const user = useSelector((state) => state.user.user);
   const { messages, setMsg } = useContext(MsgContext);
-  const [createGroup, setCreateGroup] = useState(false);
   const currentMsging = useSelector((state) => state.currentMsging.info);
-  const dispatch = useDispatch();
   const { socket, setSocket } = useContext(SocketContext);
+  const [createGroup, setCreateGroup] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     let currentMsgingLocal = JSON.parse(localStorage.getItem("currentMsging"));

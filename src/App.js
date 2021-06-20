@@ -50,10 +50,9 @@ function App() {
 
   useEffect(() => {
     let hash = localStorage.getItem("i_hash");
-    if (hash) {
+    if (hash && (!user || Object.keys(user).length)) {
       dispatch(setUser({ token: hash }));
-    }
-    if (hash) {
+
       let s = io(BEURL, {
         auth: {
           token: localStorage.getItem("i_hash"),

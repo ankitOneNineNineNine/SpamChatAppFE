@@ -16,7 +16,7 @@ import { setUser } from "../common/actions";
 
 function Login({ history }) {
   const classes = useformStyles();
-  const userState = useSelector(setUser);
+
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
   const [credentials, setCredentials] = useState({});
