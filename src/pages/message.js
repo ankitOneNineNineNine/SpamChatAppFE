@@ -57,12 +57,13 @@ export default function NewMessage({ history }) {
     let msg = messages;
 
     let UnseenMsgFrom = msg.filter((m) => m.from._id === from._id && !m.seen);
-    console.log(from, UnseenMsgFrom);
     UnseenMsgFrom.forEach(async (msgs) => {
       let i = messages.findIndex((m) => m._id === msgs._id);
       msg[i]["seen"] = true;
       setMsg([...msg]);
-      let done = await PUT(`/messages/${msgs._id}`, { seen: true }, true);
+      if (msgs._id) {
+        let done = await PUT(`/messages/${msgs._id}`, { seen: true }, true);
+      }
     });
   };
 

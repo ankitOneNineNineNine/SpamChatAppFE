@@ -36,7 +36,9 @@ function App() {
       let i = msg.findIndex((m) => m._id === ms._id);
       msg[i]["seen"] = true;
       setMessages([...msg]);
-      let done = await PUT(`/messages/${ms._id}`, { seen: true }, true);
+      if (ms._id) {
+        let done = await PUT(`/messages/${ms._id}`, { seen: true }, true);
+      }
     });
   };
 
@@ -46,19 +48,21 @@ function App() {
 
   useEffect(() => {
     seenMessage();
-  }, [messages]);
+  }, [messages.length]);
 
   useEffect(() => {
     let hash = localStorage.getItem("i_hash");
     if (hash && (!user || Object.keys(user).length)) {
       dispatch(setUser({ token: hash }));
+    }
 
+    if (hash) {
       let s = io(BEURL, {
         auth: {
           token: localStorage.getItem("i_hash"),
         },
       });
-
+      s.emit("user", user);
       setSocket(s);
     }
   }, [localStorage.getItem("i_hash")]);
@@ -74,8 +78,13 @@ function App() {
 
   useEffect(() => {
     if (socket) {
+      socket.on("status", (msg) => {
+        console.log(msg);
+        let hash = localStorage.getItem("i_hash");
+        dispatch(setUser({ token: hash }));
+      });
       socket.on("msgR", function (msg) {
-        if (messages.findIndex((ms) => ms._id !== msg._id)) {
+        if (messages.findIndex((ms) => ms._id !== msg._id) < 0) {
           if (msg.from._id !== user?._id) {
             msgRing
               .play()
