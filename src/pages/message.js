@@ -62,7 +62,12 @@ export default function NewMessage({ history }) {
       msg[i]["seen"] = true;
       setMsg([...msg]);
       if (msgs._id) {
-        let done = await PUT(`/messages/${msgs._id}`, { seen: true }, true);
+        try {
+  
+          let done = await PUT(`/messages/${msgs._id}`, { seen: true }, true);
+        } catch (e) {
+          console.log(e);
+        }
       }
     });
   };
@@ -81,7 +86,6 @@ export default function NewMessage({ history }) {
       notificationMessages.push(msg);
     }
   });
-  console.log(notSeenMsgs, notificationMessages);
 
   return (
     <div className={classes.dropdown}>

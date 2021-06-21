@@ -2,7 +2,7 @@ import axios from "axios";
 import { BEURL } from "../config";
 
 const http = axios.create({
-  baseURL: BEURL+"/appv1",
+  baseURL: BEURL + "/appv1",
 });
 
 export const GET = (url, secured = false) => {
@@ -41,6 +41,7 @@ export const PUT = (
   secured = false,
   contentType = "application/json"
 ) => {
+
   return http({
     method: "PUT",
     url,

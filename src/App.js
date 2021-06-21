@@ -31,24 +31,28 @@ function App() {
     let filterMsg = messages.filter(
       (m) => m.from?._id === currentMsging?._id && !m.seen
     );
-
+console.log(filterMsg)
     filterMsg.forEach(async (ms) => {
       let i = msg.findIndex((m) => m._id === ms._id);
       msg[i]["seen"] = true;
       setMessages([...msg]);
       if (ms._id) {
-        let done = await PUT(`/messages/${ms._id}`, { seen: true }, true);
+        try {
+          let done = await PUT(`/messages/${ms._id}`, { seen: true }, true);
+        } catch (e) {
+          console.log(e);
+        }
       }
     });
   };
 
   useEffect(() => {
     seenMessage();
-  }, [currentMsging?._id]);
+  }, [currentMsging]);
 
   useEffect(() => {
     seenMessage();
-  }, [messages.length]);
+  }, [messages]);
 
   useEffect(() => {
     let hash = localStorage.getItem("i_hash");
@@ -56,7 +60,7 @@ function App() {
       dispatch(setUser({ token: hash }));
     }
 
-    if (hash) {
+    if (hash && !socket) {
       let s = io(BEURL, {
         auth: {
           token: localStorage.getItem("i_hash"),
@@ -84,6 +88,7 @@ function App() {
         dispatch(setUser({ token: hash }));
       });
       socket.on("msgR", function (msg) {
+        console.log(msg)
         if (messages.findIndex((ms) => ms._id !== msg._id) < 0) {
           if (msg.from._id !== user?._id) {
             msgRing

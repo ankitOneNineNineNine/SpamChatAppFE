@@ -20,7 +20,7 @@ export default function People() {
 
   const sentNotifs = (u) => {
     let ind = notifications.findIndex((n) => n.to._id === u._id);
-    console.log(u, ind);
+
     if (ind < 0) {
       return false;
     }

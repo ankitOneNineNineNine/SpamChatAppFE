@@ -93,7 +93,7 @@ export default function NewNotifs() {
       </div>
     );
   }
-  console.log(notifications);
+
   return (
     <div className={classes.dropdown}>
       <Typography variant="h6" style={{ textAlign: "center" }}>
@@ -150,7 +150,7 @@ export default function NewNotifs() {
               variant="outlined"
               onClick={() => {
                 REMOVE(`/notifs/${notif._id}`, true);
-                console.log(notif);
+        
                 setNotifications(
                   notifications.filter((not) => not._id !== notif._id)
                 );
