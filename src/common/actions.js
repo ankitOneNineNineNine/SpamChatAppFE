@@ -6,10 +6,22 @@ import {
   GET_USER,
   SEARCH_PENDING,
   SEARCH_SUCCESS,
-  CURRENT_MSGING
+  CURRENT_MSGING,
+  FRIEND_STATUS
 } from "./types";
 
 export const setUser = (credentials) => {
+  if (credentials.friend) {
+    return (dispatch) => {
+      dispatch({
+        type: FRIEND_STATUS,
+        payload: {
+          me: credentials.me,
+          friend: credentials.friend,
+        },
+      });
+    };
+  }
   return async (dispatch) => {
     dispatch({ type: SET_USER_PENDING });
     try {
@@ -34,10 +46,9 @@ export const searchPeople = (text) => {
   };
 };
 
-
-export const setCurrentMessaging = info =>{
+export const setCurrentMessaging = (info) => {
   return {
     type: CURRENT_MSGING,
-    payload: info
-  }
-}
+    payload: info,
+  };
+};

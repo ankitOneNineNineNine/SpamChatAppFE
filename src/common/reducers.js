@@ -29,7 +29,17 @@ export const setUser = (state = initialState, action) => {
         user: action.payload,
       };
       break;
-
+    case FRIEND_STATUS:
+      let ind = action.payload.me.friends.findIndex(
+        (f) => f._id === action.payload.friend._id
+      );
+      let user = action.payload.me;
+      user.friends[ind] = friend;
+      return {
+        ...state,
+        user: user,
+        isLoading: false,
+      };
     // case SET_USER_FAILURE:
     //     return {
     //         ...state,

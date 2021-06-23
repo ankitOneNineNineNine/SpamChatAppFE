@@ -31,7 +31,7 @@ function App() {
     let filterMsg = messages.filter(
       (m) => m.from?._id === currentMsging?._id && !m.seen
     );
-console.log(filterMsg)
+    console.log(filterMsg);
     filterMsg.forEach(async (ms) => {
       let i = msg.findIndex((m) => m._id === ms._id);
       msg[i]["seen"] = true;
@@ -66,7 +66,7 @@ console.log(filterMsg)
           token: localStorage.getItem("i_hash"),
         },
       });
-      s.emit("user", user);
+
       setSocket(s);
     }
   }, [localStorage.getItem("i_hash")]);
@@ -82,13 +82,23 @@ console.log(filterMsg)
 
   useEffect(() => {
     if (socket) {
+      if (user) {
+        socket.emit("user", user);
+        socket.on("frStatus", (friend) => {
+          console.log(friend);
+          dispatch(
+            setUser({
+              me: user,
+              friend: friend,
+            })
+          );
+        });
+      }
       socket.on("status", (msg) => {
-        console.log(msg);
         let hash = localStorage.getItem("i_hash");
         dispatch(setUser({ token: hash }));
       });
       socket.on("msgR", function (msg) {
-        console.log(msg)
         if (messages.findIndex((ms) => ms._id !== msg._id) < 0) {
           if (msg.from._id !== user?._id) {
             msgRing
