@@ -186,6 +186,19 @@ function Navbar({ history }) {
       <MenuItem onClick={logout}>Logout</MenuItem>
     </Menu>
   );
+  let msgs = {};
+  user?.friends.map((friend) => {
+    let thisUserMsg = messages.filter(
+      (m) => m?.from?._id === friend._id || m?.toInd?._id === friend._id
+    );
+    msgs[friend._id] = thisUserMsg[thisUserMsg.length - 1];
+  });
+  let keys = Object.keys(msgs);
+
+  let unseen = keys.reduce((acc, key) => {
+    let r = a[key].seen ? 0 : 1;
+    return acc + r;
+  }, 0);
 
   const mobileMenuId = "primary-search-account-menu-mobile";
   const renderMobileMenu = (
@@ -206,13 +219,7 @@ function Navbar({ history }) {
         }}
       >
         <IconButton aria-label="show new mails" color="inherit">
-          <Badge
-            badgeContent={
-              messages.filter((m) => !m.seen && m?.from?._id !== user?._id)
-                .length
-            }
-            color="secondary"
-          >
+          <Badge badgeContent={unseen} color="secondary">
             <MailIcon />
           </Badge>
         </IconButton>
@@ -318,15 +325,7 @@ function Navbar({ history }) {
                     setNotifsOpen(false);
                   }}
                 >
-           
-                  <Badge
-                    badgeContent={
-                      messages.filter(
-                        (m) => !m.seen && m?.from?._id !== user._id
-                      ).length
-                    }
-                    color="secondary"
-                  >
+                  <Badge badgeContent={unseen} color="secondary">
                     <MailIcon />
                   </Badge>
                 </IconButton>

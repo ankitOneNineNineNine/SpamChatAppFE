@@ -7,7 +7,7 @@ import {
   SEARCH_PENDING,
   SEARCH_SUCCESS,
   CURRENT_MSGING,
-  FRIEND_STATUS
+  FRIEND_STATUS,
 } from "./types";
 
 export const setUser = (credentials) => {
@@ -18,6 +18,7 @@ export const setUser = (credentials) => {
         payload: {
           me: credentials.me,
           friend: credentials.friend,
+          status: credentials.status,
         },
       });
     };

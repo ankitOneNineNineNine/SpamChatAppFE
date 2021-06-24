@@ -31,15 +31,23 @@ export const setUser = (state = initialState, action) => {
       break;
     case FRIEND_STATUS:
       let ind = action.payload.me.friends.findIndex(
-        (f) => f._id === action.payload.friend._id
+        (f) => f._id === action.payload.friend
       );
-      let user = action.payload.me;
-      user.friends[ind] = friend;
-      return {
-        ...state,
-        user: user,
-        isLoading: false,
-      };
+      if (ind >= 0) {
+        let user = action.payload.me;
+        user.friends[ind].status = action.payload.status;
+        return {
+          ...state,
+          user: user,
+          isLoading: false,
+        };
+      } else {
+        return {
+          ...state,
+          user: me,
+          isLoading: false,
+        };
+      }
     // case SET_USER_FAILURE:
     //     return {
     //         ...state,

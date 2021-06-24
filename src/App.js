@@ -84,14 +84,16 @@ function App() {
     if (socket) {
       if (user) {
         socket.emit("user", user);
-        socket.on("frStatus", (friend) => {
-          console.log(friend);
-          dispatch(
-            setUser({
-              me: user,
-              friend: friend,
-            })
-          );
+        socket.on("frStatus", ({ friend, status }) => {
+          if (user.friends.findIndex((fr) => fr._id === friend) > -1) {
+            dispatch(
+              setUser({
+                me: user,
+                friend: friend,
+                status: status,
+              })
+            );
+          }
         });
       }
       socket.on("status", (msg) => {
