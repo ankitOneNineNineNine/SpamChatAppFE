@@ -39,8 +39,9 @@ const useStyles = makeStyles((theme) => ({
       height: "63vh",
     },
     [theme.breakpoints.down("650")]: {
-      height: "65vh",
+      height: ({images}) => images.length? '58vh': '68vh'
     },
+
   },
   root: {
     flexGrow: 1,
@@ -75,8 +76,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Home() {
-  const classes = useStyles();
   const matches = useMediaQuery("(min-width:650px)");
+  const [textMsg, setTextMsg] = useState("");
+  const [images, setImages] = useState([]);
   const msgRef = useRef(null);
   const user = useSelector((state) => state.user.user);
   const { messages, setMsg } = useContext(MsgContext);
@@ -84,6 +86,7 @@ function Home() {
   const { socket, setSocket } = useContext(SocketContext);
   const [createGroup, setCreateGroup] = useState(false);
   const dispatch = useDispatch();
+  const classes = useStyles({images});
 
   useEffect(() => {
     let currentMsgingLocal = JSON.parse(localStorage.getItem("currentMsging"));
@@ -100,9 +103,6 @@ function Home() {
     }
   }, [msgRef, messages, currentMsging]);
 
-  const [textMsg, setTextMsg] = useState("");
-  const [images, setImages] = useState([]);
-
   const messageChange = (text) => {
     setTextMsg(text);
   };
@@ -117,6 +117,7 @@ function Home() {
       return;
     }
     if (images.length) {
+
       let formData = new FormData();
       formData.append("textMsg", textMsg);
       formData.append("from", user._id);
@@ -129,16 +130,23 @@ function Home() {
         formData.append("images", image);
       });
       POST("/messages/", formData, true, "multipart/form-data")
-        .then((data) => socket.emit("imgMsg", data))
-        .catch((err) => displayError(err?.response?.data?.message));
+        .then((data) => {
+          socket.emit("imgMsg", data)
+          setImages([])
+        })
+        .catch((err) => {
+          console.log(err)
+          setImages([])
+          displayError(err?.response?.data?.message)
+        });
     } else {
       let receiver = currentMsging.fullname
         ? {
-            toInd: currentMsging._id,
-          }
+          toInd: currentMsging._id,
+        }
         : {
-            toGrp: currentMsging._id,
-          };
+          toGrp: currentMsging._id,
+        };
       let msg = {
         ...receiver,
         from: user._id,
@@ -150,7 +158,15 @@ function Home() {
     setImages([]);
   };
   const imageSelect = (e) => {
-    setImages([...images, ...e.target.files]);
+    if (images.length > 3) {
+      alert('Only 3 images at a time is allowed!!')
+    }
+    else if (e.target.files.length > 3) {
+      alert('Only 3 images at a time is allowed!!')
+    }
+    else {
+      setImages([...images, ...e.target.files]);
+    }
   };
 
   if (!user) {

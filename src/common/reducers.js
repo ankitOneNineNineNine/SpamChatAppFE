@@ -5,6 +5,7 @@ import {
   GET_USER,
   SEARCH_SUCCESS,
   SEARCH_PENDING,
+  FRIEND_STATUS,
   CURRENT_MSGING,
 } from "./types";
 
@@ -44,7 +45,6 @@ export const setUser = (state = initialState, action) => {
       } else {
         return {
           ...state,
-          user: me,
           isLoading: false,
         };
       }

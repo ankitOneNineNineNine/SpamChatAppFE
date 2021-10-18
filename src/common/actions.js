@@ -42,7 +42,8 @@ export const searchPeople = (text) => {
       const people = await POST("/user/search", { srcText: text }, true);
       dispatch({ type: SEARCH_SUCCESS, payload: people });
     } catch (error) {
-      displayError(`${error.response.data.message}`);
+      // displayError(`${error.response.data.message}`);
+      console.log(error.response)
     }
   };
 };

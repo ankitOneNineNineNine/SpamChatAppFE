@@ -191,12 +191,14 @@ function Navbar({ history }) {
     let thisUserMsg = messages.filter(
       (m) => m?.from?._id === friend._id || m?.toInd?._id === friend._id
     );
-    msgs[friend._id] = thisUserMsg[thisUserMsg.length - 1];
+    if(thisUserMsg.length){
+      msgs[friend._id] = thisUserMsg[thisUserMsg.length - 1];
+    }
   });
   let keys = Object.keys(msgs);
 
   let unseen = keys.reduce((acc, key) => {
-    let r = a[key].seen ? 0 : 1;
+    let r = msgs[key].seen ? 0 : 1;
     return acc + r;
   }, 0);
 

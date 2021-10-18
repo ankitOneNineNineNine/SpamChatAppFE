@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -9,11 +9,14 @@ import ImageIcon from "@material-ui/icons/Image";
 import WorkIcon from "@material-ui/icons/Work";
 import BeachAccessIcon from "@material-ui/icons/BeachAccess";
 import {
+  Box,
+  Button,
   Grid,
   GridList,
   GridListTile,
   GridListTileBar,
   ListItemIcon,
+  Modal,
   Typography,
 } from "@material-ui/core";
 import moment from "moment";
@@ -37,19 +40,15 @@ const useStyles = makeStyles((theme) => ({
     display: "block",
   },
   gridListContainer: {
-    flexDirection: "row",
-    flexShrink: "2",
-    padding: 0,
-    overflow: "hidden",
-    height: "auto",
+    display: 'flex',
+    justifyContent: 'center',
+    flex: '0 0 30%',
+    flexWrap: 'wrap',
   },
-  gridList: {
-    padding: 0,
-    position: "relative",
-  },
+
   imageMessage: {
-    width: "100%",
-    height: "auto",
+    width: "150px",
+    height: "150px",
     position: "relative",
     float: "revert",
     cursor: "pointer",
@@ -58,13 +57,40 @@ const useStyles = makeStyles((theme) => ({
   headingFlex: { display: "flex", padding: "5px", alignItems: "center" },
   imageContainer: {
     overflow: "hidden",
-    flex: '.2'
+
   },
+  modalImageContainer: {
+    width: '80%',
+    margin: 'auto',
+
+    overflow: 'hidden',
+  },
+  modalImage: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    maxWidth: '100%',
+    maxHeight: '100%'
+
+  },
+  modal: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  }
 }));
 
 export default function MessageView({ message, user, msgNots = false }) {
   const classes = useStyles();
-
+  const [open, setOpen] = useState(false);
+  const [mdlImg, setMdlImg] = useState(null)
   return (
     <div>
       <ListItem
@@ -83,35 +109,47 @@ export default function MessageView({ message, user, msgNots = false }) {
             </Avatar>
           </ListItemAvatar>
           <ListItemText
-            primary={`${
-              message.from.fullname ? message.from.fullname : message.from.name
-            }, ${moment(message.createdAt).format("MMMM Do YYYY, h:mm:ss a")}`}
+            primary={`${message.from.fullname ? message.from.fullname : message.from.name
+              }, ${moment(message.createdAt).format("MMMM Do YYYY, h:mm:ss a")}`}
             secondary={
               (msgNots ? (message?.images?.length ? "FILE MESSAGE" : "") : "") +
               message.text
             }
           />
         </div>
+
         {!msgNots ? (
           message.images?.length ? (
-            <div>
-              <GridList
-                cellHeight={150}
-                cols={2}
-                className={classes.gridListContainer}
+            <div className={classes.gridListContainer}>
+
+              {message.images.map((image, i) => (
+                <div key={i} className={classes.imageContainer}>
+
+                  <img
+                    className={classes.imageMessage}
+                    src={image}
+                    loading="lazy"
+                    onClick={() => { setOpen(true); setMdlImg(image) }}
+                  />
+                </div>
+              ))}
+
+              <Modal
+                open={open}
+                onClose={() => { setOpen(false) }}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
               >
-                {message.images.map((image, i) => (
-                  <div key={i} className={classes.imageContainer}>
-                    <GridListTile className={classes.gridList}>
-                      <img
-                        className={classes.imageMessage}
-                        src={image}
-                        loading="lazy"
-                      />
-                    </GridListTile>
-                  </div>
-                ))}
-              </GridList>
+                <div className={classes.modalImageContainer}>
+                  <img
+                    className={classes.modalImage}
+                    src={mdlImg}
+                    loading="lazy"
+                  />
+                </div>
+
+              </Modal>
+
             </div>
           ) : null
         ) : null}

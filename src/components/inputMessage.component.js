@@ -64,6 +64,7 @@ export default function InputMessage({
   };
 
   const imgS = (e) => {
+  
     inputImageRef.current.click();
   };
   return (
@@ -74,6 +75,7 @@ export default function InputMessage({
         onChange={imageSelect}
         className={classes.noDisp}
         multiple
+        accept ="image/*"
       />
       <div className={classes.imageSelectedDisplay}>
         {images.length

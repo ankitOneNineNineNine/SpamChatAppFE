@@ -72,12 +72,14 @@ function App() {
   }, [localStorage.getItem("i_hash")]);
 
   useEffect(() => {
-    GET("/messages", true).then((m) => {
-      setMessages([...m]);
-    });
-    GET("/notifs", true).then((n) => {
-      setNotifs([...n]);
-    });
+    if(user){
+      GET("/messages", true).then((m) => {
+        setMessages([...m]);
+      });
+      GET("/notifs", true).then((n) => {
+        setNotifs([...n]);
+      });
+    }
   }, [user]);
 
   useEffect(() => {
