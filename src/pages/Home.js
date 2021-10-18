@@ -29,17 +29,17 @@ import { displayError } from "../common/toaster";
 import CreateGroup from "../components/createGroup.component";
 const useStyles = makeStyles((theme) => ({
   messageList: {
-    height: "71vh",
+    height: ({images}) => images.length? '70vh': '78vh',
     overflowY: "scroll",
     overflowX: "hidden",
     scrollbarWidth: "none",
     backgroundColor: theme.palette.background.paper,
     padding: "5px",
     [theme.breakpoints.down("850")]: {
-      height: "63vh",
+      height: ({images}) => images.length? '63vh': '68vh'
     },
     [theme.breakpoints.down("650")]: {
-      height: ({images}) => images.length? '58vh': '68vh'
+      height: ({images}) => images.length? '58vh': '60vh'
     },
 
   },
