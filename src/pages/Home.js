@@ -28,7 +28,7 @@ import { POST } from "../adapters/http.adapter";
 import { displayError } from "../common/toaster";
 import CreateGroup from "../components/createGroup.component";
 import Tesseract from 'tesseract.js';
-
+import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 
 
 
@@ -93,7 +93,7 @@ function Home() {
   const [spam, setSpam] = useState(false)
   const dispatch = useDispatch();
   const classes = useStyles({ images });
-
+  const location = useLocation()
   useEffect(() => {
     let currentMsgingLocal = JSON.parse(localStorage.getItem("currentMsging"));
     if (currentMsgingLocal) {
@@ -203,14 +203,7 @@ function Home() {
     );
   }
 
-  const spmDivider = (spamD) => {
-    if (spamD) {
-      setSpam('spam')
-    }
-    else {
-      setSpam('Ham')
-    }
-  }
+
 
   let filteredMessages = [];
   if (currentMsging && currentMsging._id) {
@@ -218,14 +211,14 @@ function Home() {
       filteredMessages = messages.filter((msg) => {
         if (currentMsging.name) {
           if (msg.toGrp) {
-            return msg.toGrp._id === currentMsging._id && msg.prediction === spam;
+            return msg.toGrp._id === currentMsging._id
           }
         } else {
           if (msg.toInd) {
             if (
               msg.toInd._id === currentMsging._id ||
               (msg.from._id === currentMsging._id && msg.toInd._id === user._id)
-              && (msg.prediction === spam)
+
             ) {
               return true;
             }
@@ -236,9 +229,11 @@ function Home() {
     }
   }
 
+  const dispMessage = filteredMessages.filter(msg => msg.prediction === location.search.replace('?', ''))
+  // console.log(filteredMessages, dispMessage)
   return (
     <div className={classes.root}>
-      <LDrawer user={user} spmDivider={spmDivider} />
+      <LDrawer user={user} />
       <CreateGroup />
       <Grid container spacing={3}>
         <Grid item xs className={classes.info}>
@@ -253,7 +248,7 @@ function Home() {
           </Typography>
           <Divider />
           <List className={classes.messageList} ref={msgRef}>
-            {filteredMessages.map((message, i) => {
+            {dispMessage.map((message, i) => {
               return <MessageView key={i} message={message} user={user} />;
             })}
           </List>

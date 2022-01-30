@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -9,6 +9,7 @@ import InboxIcon from "@material-ui/icons/Inbox";
 import DeleteIcon from "@material-ui/icons/Delete";
 import LabelIcon from "@material-ui/icons/Label";
 import DraftsIcon from "@material-ui/icons/Drafts";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,18 +33,13 @@ function ListItemLink(props) {
 
 
 
-export default function MessageDividers({spmDivider}) {
+function MessageDividers({ history }) {
   const classes = useStyles();
   const [selectedIndex, setSelectedIndex] = useState(0);
-  console.log(spmDivider)
+
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
-    if(index == 0){
-      spmDivider(false)
-    }
-    else{
-      spmDivider(true)
-    }
+    history.push(`?${index ? 'spam' : 'ham'}`)
   };
   return (
     <div className={classes.root}>
@@ -74,3 +70,6 @@ export default function MessageDividers({spmDivider}) {
     </div>
   );
 }
+
+
+export default withRouter(MessageDividers)
