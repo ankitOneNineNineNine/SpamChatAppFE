@@ -27,19 +27,24 @@ import * as io from "socket.io-client";
 import { POST } from "../adapters/http.adapter";
 import { displayError } from "../common/toaster";
 import CreateGroup from "../components/createGroup.component";
+import Tesseract from 'tesseract.js';
+
+
+
+
 const useStyles = makeStyles((theme) => ({
   messageList: {
-    height: ({images}) => images.length? '70vh': '78vh',
+    height: ({ images }) => images.length ? '70vh' : '78vh',
     overflowY: "scroll",
     overflowX: "hidden",
     scrollbarWidth: "none",
     backgroundColor: theme.palette.background.paper,
     padding: "5px",
     [theme.breakpoints.down("850")]: {
-      height: ({images}) => images.length? '63vh': '68vh'
+      height: ({ images }) => images.length ? '63vh' : '68vh'
     },
     [theme.breakpoints.down("650")]: {
-      height: ({images}) => images.length? '58vh': '60vh'
+      height: ({ images }) => images.length ? '58vh' : '60vh'
     },
 
   },
@@ -85,8 +90,9 @@ function Home() {
   const currentMsging = useSelector((state) => state.currentMsging.info);
   const { socket, setSocket } = useContext(SocketContext);
   const [createGroup, setCreateGroup] = useState(false);
+  const [spam, setSpam] = useState(false)
   const dispatch = useDispatch();
-  const classes = useStyles({images});
+  const classes = useStyles({ images });
 
   useEffect(() => {
     let currentMsgingLocal = JSON.parse(localStorage.getItem("currentMsging"));
@@ -112,10 +118,15 @@ function Home() {
 
     setImages(imgs);
   };
-  const messageSend = () => {
+  const messageSend = async () => {
     if (!textMsg.length && !images.length) {
       return;
     }
+    if (images.length > 2) {
+      displayError('Please only send atmost 2 images at a time');
+      return
+    }
+
     if (images.length) {
 
       let formData = new FormData();
@@ -128,7 +139,16 @@ function Home() {
       }
       images.forEach((image) => {
         formData.append("images", image);
-      });
+
+        Tesseract.recognize(
+          image,
+          'eng',
+          { logger: m => { } }
+        ).then(async ({ data: { text } }) => {
+          let result = await POST(`http://localhost:8000/predict?line=${text}`);
+          formData.append("prediction", result.Prediction)
+        });
+      })
       POST("/messages/", formData, true, "multipart/form-data")
         .then((data) => {
           socket.emit("imgMsg", data)
@@ -140,6 +160,8 @@ function Home() {
           displayError(err?.response?.data?.message)
         });
     } else {
+      let result = await POST(`http://localhost:8000/predict?line=${textMsg}`);
+
       let receiver = currentMsging.fullname
         ? {
           toInd: currentMsging._id,
@@ -151,6 +173,7 @@ function Home() {
         ...receiver,
         from: user._id,
         text: textMsg,
+        prediction: result.Prediction
       };
       socket.emit("msgS", msg);
     }
@@ -179,19 +202,30 @@ function Home() {
       </Typography>
     );
   }
+
+  const spmDivider = (spamD) => {
+    if (spamD) {
+      setSpam('spam')
+    }
+    else {
+      setSpam('Ham')
+    }
+  }
+
   let filteredMessages = [];
   if (currentMsging && currentMsging._id) {
     if (messages.length) {
       filteredMessages = messages.filter((msg) => {
         if (currentMsging.name) {
           if (msg.toGrp) {
-            return msg.toGrp._id === currentMsging._id;
+            return msg.toGrp._id === currentMsging._id && msg.prediction === spam;
           }
         } else {
           if (msg.toInd) {
             if (
               msg.toInd._id === currentMsging._id ||
               (msg.from._id === currentMsging._id && msg.toInd._id === user._id)
+              && (msg.prediction === spam)
             ) {
               return true;
             }
@@ -204,7 +238,7 @@ function Home() {
 
   return (
     <div className={classes.root}>
-      <LDrawer user={user} />
+      <LDrawer user={user} spmDivider={spmDivider} />
       <CreateGroup />
       <Grid container spacing={3}>
         <Grid item xs className={classes.info}>

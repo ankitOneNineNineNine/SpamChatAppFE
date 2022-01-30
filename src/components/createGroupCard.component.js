@@ -98,8 +98,8 @@ export default function CreateGroupCard({
           typeof groupImage === "string"
             ? groupImage
             : groupImage
-            ? URL.createObjectURL(groupImage)
-            : `${process.env.PUBLIC_URL}/groupImg.png`
+              ? URL.createObjectURL(groupImage)
+              : `${process.env.PUBLIC_URL}/groupImg.png`
         }
         title="profile image"
       />

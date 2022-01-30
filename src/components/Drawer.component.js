@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function LDrawer({ user }) {
+export default function LDrawer({ user, spmDivider }) {
   const classes = useStyles();
   const [state, setState] = React.useState({
     left: false,
@@ -63,6 +63,8 @@ export default function LDrawer({ user }) {
 
     setState({ ...state, [anchor]: open });
   };
+
+ 
 
   return (
     <div>
@@ -104,7 +106,7 @@ export default function LDrawer({ user }) {
             ) : (
               <div style={{ width: "250px" }}>
                 <Profile user={currentMsging} />
-                <MessageDividers />
+                <MessageDividers spmDivider = {spmDivider}/>
               </div>
             )}
           </Drawer>

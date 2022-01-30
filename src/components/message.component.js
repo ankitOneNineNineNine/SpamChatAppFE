@@ -90,7 +90,8 @@ const useStyles = makeStyles((theme) => ({
 export default function MessageView({ message, user, msgNots = false }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-  const [mdlImg, setMdlImg] = useState(null)
+  const [mdlImg, setMdlImg] = useState(null);
+  
   return (
     <div>
       <ListItem

@@ -30,12 +30,20 @@ function ListItemLink(props) {
   return <ListItem button component="a" {...props} />;
 }
 
-export default function MessageDividers() {
+
+
+export default function MessageDividers({spmDivider}) {
   const classes = useStyles();
   const [selectedIndex, setSelectedIndex] = useState(0);
-
+  console.log(spmDivider)
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
+    if(index == 0){
+      spmDivider(false)
+    }
+    else{
+      spmDivider(true)
+    }
   };
   return (
     <div className={classes.root}>
@@ -53,7 +61,7 @@ export default function MessageDividers() {
         </ListItem>
         <ListItem
           button
-          selected={selectedIndex === 2}
+          selected={selectedIndex === 1}
           onClick={(e) => handleListItemClick(e, 1)}
         >
           <ListItemIcon>
