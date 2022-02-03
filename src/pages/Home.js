@@ -29,7 +29,7 @@ import { displayError } from "../common/toaster";
 import CreateGroup from "../components/createGroup.component";
 import Tesseract from 'tesseract.js';
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
-
+import * as tf from '@tensorflow/tfjs';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -93,7 +93,8 @@ function Home() {
   const [spam, setSpam] = useState(false)
   const dispatch = useDispatch();
   const classes = useStyles({ images });
-  const location = useLocation()
+  const location = useLocation();
+
   useEffect(() => {
     let currentMsgingLocal = JSON.parse(localStorage.getItem("currentMsging"));
     if (currentMsgingLocal) {
@@ -118,11 +119,56 @@ function Home() {
 
     setImages(imgs);
   };
+
+  const modelInit = async () => {
+    class L2 {
+
+      static className = 'L2';
+
+      constructor(config) {
+        return tf.regularizers.l1l2(config)
+      }
+    }
+    tf.serialization.registerClass(L2);
+
+    var model = await tf.loadLayersModel(`/NEWJSON2/model.json`);
+
+    return model;
+  }
+  const imageSpamClassify = (image) => {
+    return new Promise((res, rej) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 224;
+      canvas.height = 224;
+      let canvImg = new Image();
+      canvImg.src = URL.createObjectURL(image)
+      console.log(image)
+      canvImg.onload = async () => {
+        console.log('here')
+        ctx.drawImage(canvImg, 0, 0)
+        const tensor = tf.browser
+          .fromPixels(canvas)
+          // .div(255)
+          .toFloat()
+          .expandDims(0);
+
+        let model = await modelInit();
+
+        let prediction = await model.predict(tensor)
+        let predVal = prediction.arraySync()[0][0]
+        let result = predVal ? 'spam' : 'ham';
+
+        res(result)
+
+      };
+    })
+  }
   const messageSend = async () => {
     if (!textMsg.length && !images.length) {
       return;
     }
-    if (images.length > 2) {
+    if (images.length > 1) {
       displayError('Please only send atmost 2 images at a time');
       return
     }
@@ -137,18 +183,29 @@ function Home() {
       } else {
         formData.append("toGrp", currentMsging._id);
       }
-      images.forEach((image) => {
-        formData.append("images", image);
 
-        Tesseract.recognize(
+      for (let i = 0; i < images.length; i++) {
+        let image = images[i];
+        formData.append("images", image);
+        let pred = await imageSpamClassify(image);
+        if (pred !== 'ham') {
+          formData.append("prediction", result.Prediction)
+          break;
+        }
+
+        let { data: { text } } = await Tesseract.recognize(
           image,
           'eng',
           { logger: m => { } }
-        ).then(async ({ data: { text } }) => {
-          let result = await POST(`http://localhost:8000/predict?line=${text}`);
+        )
+        let result = await POST(`http://localhost:8000/predict?line=${text}`);
+        // console.log(text)
+        if (result.prediction !== 'ham') {
           formData.append("prediction", result.Prediction)
-        });
-      })
+          break;
+        }
+      }
+
       POST("/messages/", formData, true, "multipart/form-data")
         .then((data) => {
           socket.emit("imgMsg", data)
@@ -233,6 +290,7 @@ function Home() {
   // console.log(filteredMessages, dispMessage)
   return (
     <div className={classes.root}>
+
       <LDrawer user={user} />
       <CreateGroup />
       <Grid container spacing={3}>
