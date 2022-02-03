@@ -94,7 +94,7 @@ function Home() {
   const dispatch = useDispatch();
   const classes = useStyles({ images });
   const location = useLocation();
-
+  const [sending, setSending] = useState(false)
   useEffect(() => {
     let currentMsgingLocal = JSON.parse(localStorage.getItem("currentMsging"));
     if (currentMsgingLocal) {
@@ -143,9 +143,9 @@ function Home() {
       canvas.height = 224;
       let canvImg = new Image();
       canvImg.src = URL.createObjectURL(image)
-      console.log(image)
+      
       canvImg.onload = async () => {
-        console.log('here')
+        
         ctx.drawImage(canvImg, 0, 0)
         const tensor = tf.browser
           .fromPixels(canvas)
@@ -165,11 +165,12 @@ function Home() {
     })
   }
   const messageSend = async () => {
+    setSending(true)
     if (!textMsg.length && !images.length) {
       return;
     }
     if (images.length > 1) {
-      displayError('Please only send atmost 2 images at a time');
+      displayError('Please only send atmost 1 images at a time');
       return
     }
 
@@ -189,7 +190,7 @@ function Home() {
         formData.append("images", image);
         let pred = await imageSpamClassify(image);
         if (pred !== 'ham') {
-          formData.append("prediction", result.Prediction)
+          formData.append("prediction", pred)
           break;
         }
 
@@ -236,6 +237,7 @@ function Home() {
     }
     setTextMsg("");
     setImages([]);
+    setSending(false)
   };
   const imageSelect = (e) => {
     if (images.length > 3) {
@@ -310,14 +312,19 @@ function Home() {
               return <MessageView key={i} message={message} user={user} />;
             })}
           </List>
-          <InputMessage
-            messageSend={messageSend}
-            messageChange={messageChange}
-            imageSelect={imageSelect}
-            removeImage={removeImage}
-            images={images}
-            textMsg={textMsg}
-          />
+          {
+            sending ?
+              <CircularProgress /> :
+              <InputMessage
+                messageSend={messageSend}
+                messageChange={messageChange}
+                imageSelect={imageSelect}
+                removeImage={removeImage}
+                images={images}
+                textMsg={textMsg}
+              />
+
+          }
         </Grid>
         <Grid item xs className={classes.friendsList}>
           <FriendsList

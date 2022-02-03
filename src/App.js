@@ -31,7 +31,7 @@ function App() {
     let filterMsg = messages.filter(
       (m) => m.from?._id === currentMsging?._id && !m.seen
     );
-    console.log(filterMsg);
+    // console.log(filterMsg);
     filterMsg.forEach(async (ms) => {
       let i = msg.findIndex((m) => m._id === ms._id);
       msg[i]["seen"] = true;
