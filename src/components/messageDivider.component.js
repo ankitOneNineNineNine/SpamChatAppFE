@@ -39,7 +39,7 @@ function MessageDividers({ history }) {
 
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
-    history.push(`?${index ? 'spam' : 'ham'}`)
+    history.push(`?${index ? 'spam' : ''}`)
   };
   return (
     <div className={classes.root}>

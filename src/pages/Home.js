@@ -143,9 +143,9 @@ function Home() {
       canvas.height = 224;
       let canvImg = new Image();
       canvImg.src = URL.createObjectURL(image)
-      
+
       canvImg.onload = async () => {
-        
+
         ctx.drawImage(canvImg, 0, 0)
         const tensor = tf.browser
           .fromPixels(canvas)
@@ -184,26 +184,30 @@ function Home() {
       } else {
         formData.append("toGrp", currentMsging._id);
       }
-
+      let spam = false;
       for (let i = 0; i < images.length; i++) {
         let image = images[i];
         formData.append("images", image);
-        let pred = await imageSpamClassify(image);
-        if (pred !== 'ham') {
-          formData.append("prediction", pred)
-          break;
-        }
+        if (!spam) {
+          let pred = await imageSpamClassify(image);
+          if (pred !== 'ham') {
+            formData.append("prediction", pred)
+            spam = true;
+          }
+          else {
+            let { data: { text } } = await Tesseract.recognize(
+              image,
+              'eng',
+              { logger: m => { } }
+            )
+            let result = await POST(`http://localhost:8000/predict?line=${text}`);
+            // console.log(text)
+            if (result.prediction !== 'ham') {
+              formData.append("prediction", result.Prediction)
+              spam = true;
+            }
+          }
 
-        let { data: { text } } = await Tesseract.recognize(
-          image,
-          'eng',
-          { logger: m => { } }
-        )
-        let result = await POST(`http://localhost:8000/predict?line=${text}`);
-        // console.log(text)
-        if (result.prediction !== 'ham') {
-          formData.append("prediction", result.Prediction)
-          break;
         }
       }
 
@@ -287,8 +291,8 @@ function Home() {
       });
     }
   }
-
-  const dispMessage = filteredMessages.filter(msg => msg.prediction === location.search.replace('?', ''))
+let search = location.search.replace('?', '').length? 'spam': 'ham'
+  const dispMessage = filteredMessages.filter(msg => msg.prediction ===search )
   // console.log(filteredMessages, dispMessage)
   return (
     <div className={classes.root}>
