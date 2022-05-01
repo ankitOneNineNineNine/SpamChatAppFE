@@ -1,3 +1,14 @@
+
+# Backend NodeJS
+https://github.com/ankitOneNineNineNine/SpamChatAppBE
+
+# Mobile App React Native
+https://github.com/ankitOneNineNineNine/SpamChatAppMobile
+
+# Text Classification FAST API integration
+https://github.com/ankitOneNineNineNine/FASTAPI
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
